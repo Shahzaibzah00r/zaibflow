@@ -36,6 +36,6 @@ func Dispatch(ctx context.Context, c Context, command string, args []string) (in
 		cli.ShowFull(c.Output.Stdout, c.Catalog)
 		return 0, nil
 	default:
-		return 1, fmt.Errorf("unknown command %q", command)
+		return 1, fmt.Errorf("unknown command or provider: %q\n\nTry:\n  zaibflow config\n  zaibflow run kimi\n  zaibflow kimi --bp\n  zf-kimi --bp", command)
 	}
 }

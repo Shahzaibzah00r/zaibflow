@@ -24,6 +24,7 @@ type Parsed struct {
 func Parse(args []string) (Parsed, error) {
 	parsed := Parsed{Options: Options{Format: "human"}}
 	var positional []string
+	commandSet := false
 
 	for i := 0; i < len(args); i++ {
 		arg := args[i]
@@ -60,9 +61,14 @@ func Parse(args []string) (Parsed, error) {
 			i = len(args)
 		default:
 			if len(arg) > 0 && arg[0] == '-' {
+				if commandSet {
+					positional = append(positional, arg)
+					continue
+				}
 				return Parsed{}, fmt.Errorf("unknown option %s", arg)
 			}
 			positional = append(positional, arg)
+			commandSet = true
 		}
 	}
 

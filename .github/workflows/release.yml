@@ -64,10 +64,12 @@ jobs:
           GOARCH: ${{ matrix.goarch }}
           CGO_ENABLED: 0
         run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          LDFLAGS="-X github.com/Shahzaibzah00r/zaibflow/internal/version.Value=${VERSION}"
           if [ "${{ matrix.goos }}" = "windows" ]; then
-            go build -o dist/zaibflow.exe ./cmd/zaibflow
+            go build -ldflags "${LDFLAGS}" -o dist/zaibflow.exe ./cmd/zaibflow
           else
-            go build -o dist/zaibflow ./cmd/zaibflow
+            go build -ldflags "${LDFLAGS}" -o dist/zaibflow ./cmd/zaibflow
           fi
         shell: bash
 

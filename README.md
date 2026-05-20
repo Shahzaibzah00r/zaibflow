@@ -1,7 +1,7 @@
 <div align="center">
   <img src="assets/logo.png" alt="ZaibFlow logo" width="220" />
   <h1>ZaibFlow</h1>
-  <p><strong>A cross-platform CLI to manage and invoke model providers (Claude/OpenRouter/OLLAMA/custom).</strong></p>
+  <p><strong>Agentic AI Runtime for Claude Code — run any AI provider through Claude Code.</strong></p>
   <p>
     <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License" /></a>
     <a href="https://go.dev/"><img src="https://img.shields.io/badge/Language-Go-00ADD8.svg" alt="Go" /></a>
@@ -9,54 +9,49 @@
   </p>
 </div>
 
-## Quick Install
+## One-Command Install
 
-Choose one of the following installation methods based on your platform and preferences.
-
-- Install via the official bootstrap script (recommended):
+### macOS / Linux
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Shahzaibzah00r/zaibflow/main/zaibflow.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Shahzaibzah00r/zaibflow/main/scripts/install.sh | bash
 ```
 
-- Windows (PowerShell installer):
+### Windows
 
 ```powershell
-iwr https://raw.githubusercontent.com/Shahzaibzah00r/zaibflow/main/scripts/install.ps1 | iex
+irm https://raw.githubusercontent.com/Shahzaibzah00r/zaibflow/main/scripts/install.ps1 | iex
 ```
 
-- Install with `go` (build from source):
-
-```bash
-go install github.com/Shahzaibzah00r/zaibflow@latest
-```
-
-- Run directly with `npx` (uses packaged wrapper):
+### npm / npx
 
 ```bash
 npx zaibflow
 ```
 
-- Manual download for Windows: grab the latest `zaibflow_windows_amd64.zip` from the GitHub Releases page, extract and place `zaibflow.exe` on your PATH.
+> ZaibFlow requires Claude Code CLI. The installer checks for it automatically and guides you if it's missing.
 
-## Platform-specific notes
+## Usage
 
-- macOS
-  - Recommended: run the bootstrap script above. If you use Homebrew and a tap is available you can `brew install zaibflow` (tap not provided here by default).
-  - After installation, ensure `~/.local/bin` or the installed `bin` directory is on your `PATH`.
+```bash
+zaibflow config              # Configure a provider
+zaibflow kimi --bp           # Run Kimi K2 with permission bypass
+zaibflow zai --bp            # Run Z.AI with permission bypass
+zaibflow openrouter <alias> --bp
+zf-kimi --bp                 # Launcher shortcut
+zf-zai --bp
+zf-or <alias> --bp
+zf-local --bp
+```
 
-- Linux
-  - Use the bootstrap script, or install via `go install` if you have Go toolchain available.
-  - Place the `zaibflow` binary in a directory on your `$PATH` (for single-user installs, `~/.local/bin` is a common choice).
+## Platform-Specific Notes
 
-- Windows
-  - Use the PowerShell installer above to download the packaged `.zip` and create the shim.
-  - Alternatively, download the binary release, extract `zaibflow.exe`, and add its folder to your `%PATH%`.
-  - The repository includes `scripts/install.ps1` for unattended installs.
+- **macOS / Linux**: The installer prefers `$HOME/bin`, falling back to `$HOME/.local/bin`. It adds the directory to your shell PATH automatically.
+- **Windows**: The installer places binaries in `%LOCALAPPDATA%\Programs\ZaibFlow\bin` and updates your User PATH automatically.
 
-## Building from source
+## Building from Source
 
-Prerequisites: Go 1.20+ installed.
+Prerequisites: Go 1.20+
 
 ```bash
 git clone https://github.com/Shahzaibzah00r/zaibflow.git
@@ -66,40 +61,7 @@ go build ./cmd/zaibflow
 go install github.com/Shahzaibzah00r/zaibflow/cmd/zaibflow@latest
 ```
 
-## Usage examples
-
-Basic commands:
-
-```bash
-zaibflow init            # create config & setup default files
-zaibflow config edit     # edit configuration
-zaibflow run <provider> [args...]   # run a provider-based launcher
-zaibflow install         # install launchers and helpers
-zaibflow update          # check for updates and install
-```
-
-Examples:
-
-```bash
-zaibflow run ollama --model qwen3-coder
-zaibflow run openrouter my-alias
-zaibflow run local-provider --help
-
-# Skip permission prompts with --bp (bypass permissions)
-zf-zai --bp                          # use alias with --bp flag
-zaibflow run kimi --bp               # or use with zaibflow run
-```
-
-Launchers
-
-ZaibFlow creates small shims/launchers to make invoking providers easy. Typical names:
-
-- `zf-<provider>` (recommended short form)
-- `zaibflow-<provider>` (legacy compatibility)
-
-These are installed into the configured `bin` directory (see `ZAIBFLOW_BIN`).
-
-## Environment variables
+## Environment Variables
 
 - `ZAIBFLOW_BIN` — custom bin directory where launchers are written.
 - `ZAIBFLOW_CONFIG_DIR` — config directory (defaults to XDG config path + `/zaibflow`).
@@ -110,7 +72,7 @@ These are installed into the configured `bin` directory (see `ZAIBFLOW_BIN`).
 
 ## Troubleshooting
 
-- If `zaibflow` is not found after install, ensure the install `bin` directory is on your `PATH`.
+- If `zaibflow` is not found after install, restart your terminal so PATH changes take effect.
 - If provider launchers are missing, run `zaibflow install` to re-generate shims.
 
 ## Contributing

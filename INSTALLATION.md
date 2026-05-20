@@ -1,208 +1,107 @@
 # ZaibFlow Installation Guide
 
-Complete installation instructions for all platforms and methods.
-
 ## Quick Start
 
-### macOS / Linux (Shell Script)
+### macOS / Linux
 
 ```bash
-# Download and run installer
-curl -sSL https://raw.githubusercontent.com/Shahzaibzah00r/zaibflow/main/zaibflow.sh | bash
-
-# Verify installation
-zaibflow --version
-
-# Create launchers (optional - for quick provider access)
-zaibflow install
+curl -fsSL https://raw.githubusercontent.com/Shahzaibzah00r/zaibflow/main/scripts/install.sh | bash
 ```
 
-### Windows (PowerShell)
+The installer will:
+- Detect your OS and architecture
+- Download the latest ZaibFlow release
+- Install to `$HOME/bin` (or `$HOME/.local/bin` as fallback)
+- Add the install directory to your PATH automatically
+- Create launcher shortcuts (`zf-kimi`, `zf-zai`, `zf-or`, `zf-local`)
+- Check for Claude Code CLI and guide you if it's missing
+
+### Windows
 
 ```powershell
-# Run installer (administrator recommended)
-powershell -Command "irm https://raw.githubusercontent.com/Shahzaibzah00r/zaibflow/main/scripts/install.ps1 | iex"
-
-# Verify installation
-zaibflow --version
-
-# Create launchers (from admin PowerShell)
-zaibflow install
+irm https://raw.githubusercontent.com/Shahzaibzah00r/zaibflow/main/scripts/install.ps1 | iex
 ```
+
+The installer will:
+- Detect your architecture
+- Download the latest ZaibFlow release
+- Install to `%LOCALAPPDATA%\Programs\ZaibFlow\bin`
+- Add the install directory to your User PATH automatically
+- Create `.cmd` launcher shortcuts
+- Check for Claude Code CLI and guide you if it's missing
 
 ### npm / npx
 
 ```bash
-# Global installation
-npm install -g zaibflow
-
-# Or use directly without installing
-npx zaibflow --help
-
-# Verify
-zaibflow --version
+npx zaibflow
 ```
+
+If ZaibFlow is not already installed, the npm wrapper will download and install it automatically, then forward your arguments.
 
 ### Go (from source)
 
 ```bash
-# Requires Go 1.20+
 go install github.com/Shahzaibzah00r/zaibflow/cmd/zaibflow@latest
-
-# Verify
-zaibflow --version
 ```
 
 ### Manual Download
 
-1. **Visit** [GitHub Releases](https://github.com/Shahzaibzah00r/zaibflow/releases)
-2. **Download** the binary for your OS:
-   - `zaibflow_linux_amd64.tar.gz` (Linux)
-   - `zaibflow_darwin_amd64.tar.gz` (macOS)
-   - `zaibflow_windows_amd64.zip` (Windows)
-3. **Extract** the archive
-4. **Move** `zaibflow` / `zaibflow.exe` to a directory in your PATH:
-   - Linux/macOS: `~/.local/bin/` or `/usr/local/bin/`
-   - Windows: `C:\Program Files\ZaibFlow\bin\` (or similar)
-5. **Make executable** (Linux/macOS): `chmod +x zaibflow`
-
-## Configuration
-
-### Environment Variables
-
-```bash
-# Override config directory (default: ~/.local/share/zaibflow)
-export ZAIBFLOW_CONFIG_HOME=~/.config/zaibflow
-
-# Override secrets file location
-export ZAIBFLOW_SECRETS_FILE=~/.config/zaibflow/secrets.env
-
-# Disable updates check
-export ZAIBFLOW_SKIP_UPDATE_CHECK=1
-```
-
-### Configuration File
-
-Create `~/.local/share/zaibflow/config.json`:
-
-```json
-{
-  "providers": {
-    "kimi": {
-      "type": "http",
-      "baseUrl": "https://api.moonshot.cn/v1",
-      "model": "moonshot-v1-8k"
-    },
-    "openrouter": {
-      "type": "http",
-      "baseUrl": "https://openrouter.ai/api/v1",
-      "apiKeyEnv": "OPENROUTER_API_KEY"
-    }
-  },
-  "aliases": {
-    "my-provider": "openrouter"
-  }
-}
-```
+1. Visit [GitHub Releases](https://github.com/Shahzaibzah00r/zaibflow/releases)
+2. Download the archive for your OS:
+   - `zaibflow_linux_amd64.tar.gz`
+   - `zaibflow_linux_arm64.tar.gz`
+   - `zaibflow_darwin_amd64.tar.gz`
+   - `zaibflow_darwin_arm64.tar.gz`
+   - `zaibflow_windows_amd64.zip`
+   - `zaibflow_windows_arm64.zip`
+3. Extract the archive — it contains a single `zaibflow` (or `zaibflow.exe`) binary
+4. Move it to a directory on your PATH
 
 ## First Run
 
 ```bash
-# Show available commands
-zaibflow --help
+# Configure a provider
+zaibflow config
 
-# List installed launchers
-zaibflow list
-
-# Test with a provider
-zaibflow run kimi --version
-
-# Use a launcher shortcut
-zf-kimi --version
-```
-
-## Creating Launchers
-
-Launchers are quick-access shortcuts to specific providers:
-
-```bash
-# Install default launchers
-zaibflow install
-
-# List launchers
-zaibflow list
-
-# Use a launcher
-zf-kimi              # runs: zaibflow run kimi
-zf-or               # runs: zaibflow run openrouter
-zf-zai              # runs: zaibflow run zai
-zf-local            # runs: zaibflow run ollama
-zf-custom           # runs: zaibflow run custom
-```
-
-## Usage Examples
-
-```bash
-# Run with specific provider
-zaibflow run kimi --model moonshot-v1-8k
-
-# Run with OpenRouter alias
-zaibflow run openrouter my-alias
-
-# Skip permission prompts
-zaibflow run kimi --bp
-zf-kimi --bp
+# Run with permission bypass
+zaibflow kimi --bp
+zaibflow zai --bp
+zaibflow openrouter <alias> --bp
 
 # Use launcher shortcuts
-zf-zai --help
-zf-local --version
+zf-kimi --bp
+zf-zai --bp
+zf-or <alias> --bp
+zf-local --bp
+```
+
+## Environment Variables
+
+```bash
+# Override config directory
+export ZAIBFLOW_CONFIG_DIR=~/.config/zaibflow
+
+# Override bin directory
+export ZAIBFLOW_BIN=~/bin
+
+# Disable update check
+export ZAIBFLOW_SKIP_UPDATE_CHECK=1
 ```
 
 ## Troubleshooting
 
-### Permission Denied
-
-**Linux/macOS:**
-
-```bash
-# Make binary executable
-chmod +x ~/.local/bin/zaibflow
-```
-
-**Windows:**
-
-- Right-click PowerShell → "Run as administrator"
-- Re-run installer
-
 ### Command Not Found
 
-**Add to PATH:**
-
-Linux/macOS:
-
-```bash
-# Add to ~/.bashrc or ~/.zshrc
-export PATH="$HOME/.local/bin:$PATH"
-source ~/.bashrc  # or ~/.zshrc
-```
-
-**Windows:**
-
-- Search "Environment Variables"
-- Add `C:\Program Files\ZaibFlow\bin` to System PATH
-- Restart PowerShell/Terminal
+Restart your terminal so PATH changes take effect.
 
 ### Provider Connection Issues
 
 ```bash
-# Check configuration
-zaibflow info
+# Check provider info
+zaibflow info <provider>
 
-# Verify provider
-zaibflow run <provider> --help
-
-# Test connection
-zaibflow run <provider> --version
+# Test provider
+zaibflow test <provider>
 ```
 
 ### Clear Cache / Reset
@@ -217,26 +116,6 @@ rm -rf ~/.local/share/zaibflow
 # Reinstall
 zaibflow install
 ```
-
-## Platform-Specific Notes
-
-### macOS
-
-- Requires macOS 10.12+
-- Use Homebrew for easy updates: `brew install Shahzaibzah00r/tap/zaibflow` (when published)
-- Terminal must support dark mode for hidden input prompts
-
-### Linux
-
-- Tested on Ubuntu 20.04+, Debian 10+, Fedora 30+
-- May require `libterm` for terminal control (usually pre-installed)
-- Use system package manager if available
-
-### Windows
-
-- Requires Windows 10+, PowerShell 5.0+
-- Windows Defender may require adding exclusion for extraction folder
-- Administrator privileges recommended for installation
 
 ## Support
 

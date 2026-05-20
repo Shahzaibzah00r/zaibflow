@@ -1,29 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [[ $# -eq 0 ]]; then
-  set -- install
-fi
-
 REPO="Shahzaibzah00r/zaibflow"
 VERSION="${ZAIBFLOW_VERSION:-latest}"
 RELEASE_BASE_URL="${ZAIBFLOW_RELEASE_BASE_URL:-}"
-INSTALL_MODE="${ZAIBFLOW_INSTALL_MODE:-auto}"
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
-
-run_from_source() {
-  local source_dir="$1"
-  shift
-
-  command -v go >/dev/null 2>&1 || {
-    echo "go is required to build zaibflow from source" >&2
-    exit 1
-  }
-
-  cd "$source_dir"
-  exec go run ./cmd/zaibflow "$@"
-}
 
 detect_os() {
   case "$(uname -s)" in
@@ -93,13 +75,104 @@ verify_checksum() {
   fi
 }
 
-if [[ "$INSTALL_MODE" != "release" && -n "${BASH_SOURCE[0]:-}" && -f "${BASH_SOURCE[0]}" ]]; then
-  SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-
-  if [[ -f "$SOURCE_DIR/go.mod" && -d "$SOURCE_DIR/cmd/zaibflow" ]]; then
-    run_from_source "$SOURCE_DIR" "$@"
+ensure_claude() {
+  if command -v claude >/dev/null 2>&1; then
+    return 0
   fi
-fi
+
+  echo "Claude Code CLI is required."
+  echo ""
+
+  local os_name
+  os_name="$(detect_os)"
+
+  if [[ "$os_name" == "darwin" || "$os_name" == "linux" ]]; then
+    echo "Installing Claude Code CLI automatically..."
+    curl -fsSL https://claude.ai/install.sh | bash
+    if command -v claude >/dev/null 2>&1; then
+      return 0
+    fi
+    echo "error: Claude Code CLI installation failed or is not on PATH." >&2
+    exit 1
+  fi
+
+  echo "Please install Claude Code CLI manually:"
+  echo "  macOS/Linux: curl -fsSL https://claude.ai/install.sh | bash"
+  echo "  Windows:     See https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview"
+  exit 1
+}
+
+get_install_dir() {
+  local home="$1"
+  if [[ -d "$home/bin" ]]; then
+    echo "$home/bin"
+    return
+  fi
+  if mkdir -p "$home/bin" 2>/dev/null; then
+    echo "$home/bin"
+    return
+  fi
+  if [[ -d "$home/.local/bin" ]]; then
+    echo "$home/.local/bin"
+    return
+  fi
+  mkdir -p "$home/.local/bin"
+  echo "$home/.local/bin"
+}
+
+add_to_path() {
+  local dir="$1"
+  case ":${PATH}:" in
+    *":${dir}:"*) return 0 ;;
+  esac
+
+  export PATH="${dir}:${PATH}"
+
+  local shell_rc=""
+  if [[ -n "${ZSH_VERSION:-}" ]] || [[ "$(basename "$SHELL" 2>/dev/null)" == "zsh" ]]; then
+    shell_rc="$HOME/.zshrc"
+  elif [[ -n "${BASH_VERSION:-}" ]] || [[ "$(basename "$SHELL" 2>/dev/null)" == "bash" ]]; then
+    if [[ -f "$HOME/.bashrc" ]]; then
+      shell_rc="$HOME/.bashrc"
+    elif [[ -f "$HOME/.bash_profile" ]]; then
+      shell_rc="$HOME/.bash_profile"
+    fi
+  fi
+
+  if [[ -n "$shell_rc" ]]; then
+    if ! grep -q "export PATH=\"${dir}:\$PATH\"" "$shell_rc" 2>/dev/null; then
+      echo "export PATH=\"${dir}:\$PATH\"" >> "$shell_rc"
+      echo "Added ${dir} to PATH in ${shell_rc}"
+    fi
+  fi
+
+  if command -v fish >/dev/null 2>&1; then
+    local fish_config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/fish"
+    local fish_conf="$fish_config_dir/conf.d/zaibflow.fish"
+    mkdir -p "$fish_config_dir/conf.d"
+    if ! grep -q "set -gx PATH ${dir} \$PATH" "$fish_conf" 2>/dev/null; then
+      echo "set -gx PATH ${dir} \$PATH" >> "$fish_conf"
+      echo "Added ${dir} to PATH for fish in ${fish_conf}"
+    fi
+  fi
+}
+
+create_launchers() {
+  local bin_dir="$1"
+  local launchers=("zf-kimi" "zf-zai" "zf-or" "zf-local")
+  local targets=("kimi" "zai" "openrouter" "ollama")
+
+  for i in "${!launchers[@]}"; do
+    local name="${launchers[$i]}"
+    local target="${targets[$i]}"
+    local path="${bin_dir}/${name}"
+    cat > "$path" <<EOF
+#!/usr/bin/env bash
+exec zaibflow run ${target} "\$@"
+EOF
+    chmod +x "$path"
+  done
+}
 
 OS="$(detect_os)"
 ARCH="$(detect_arch)"
@@ -108,10 +181,17 @@ CHECKSUMS="checksums.txt"
 ASSET_PATH="$TMP_DIR/$ASSET"
 CHECKSUMS_PATH="$TMP_DIR/$CHECKSUMS"
 
+HOME_DIR="${HOME:-$(eval echo ~${USER:-$(whoami)})}"
+INSTALL_DIR="$(get_install_dir "$HOME_DIR")"
+
 echo "Installing ZaibFlow..."
 echo "Detected: ${OS} ${ARCH}"
-echo "Downloading: ${ASSET}"
+echo "Install dir: ${INSTALL_DIR}"
+echo ""
 
+ensure_claude
+
+echo "Downloading: ${ASSET}"
 curl -fsSL "$(download_url "$ASSET")" -o "$ASSET_PATH"
 curl -fsSL "$(download_url "$CHECKSUMS")" -o "$CHECKSUMS_PATH" || {
   echo "warning: could not download checksums.txt, skipping verification" >&2
@@ -125,6 +205,26 @@ if [[ -n "$CHECKSUMS_PATH" ]]; then
 fi
 
 tar -xzf "$ASSET_PATH" -C "$TMP_DIR"
-chmod +x "$TMP_DIR/zaibflow"
+mkdir -p "$INSTALL_DIR"
+cp "$TMP_DIR/zaibflow" "$INSTALL_DIR/zaibflow"
+chmod +x "$INSTALL_DIR/zaibflow"
 
-exec "$TMP_DIR/zaibflow" "$@"
+create_launchers "$INSTALL_DIR"
+add_to_path "$INSTALL_DIR"
+
+echo ""
+echo "Verifying install..."
+if command -v zaibflow >/dev/null 2>&1; then
+  zaibflow --version
+else
+  echo "warning: zaibflow not found on PATH in this session. Run: export PATH=\"${INSTALL_DIR}:\$PATH\"" >&2
+fi
+
+echo ""
+echo "ZaibFlow installed successfully!"
+echo ""
+echo "Next commands:"
+echo "  zaibflow config"
+echo "  zaibflow kimi --bp"
+echo "  zaibflow zai --bp"
+echo "  zf-kimi --bp"

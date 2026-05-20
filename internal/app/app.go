@@ -126,9 +126,16 @@ func Run(ctx context.Context, args []string, argv0 string) (int, error) {
 	if err != nil {
 		return 1, err
 	}
+
 	app, err := New(parsed)
 	if err != nil {
 		return 1, err
+	}
+
+	// Provider shortcuts: zaibflow kimi == zaibflow run kimi
+	if parsed.Command != "run" && isProviderShortcut(parsed.Command, app.Catalog) {
+		parsed.Args = append([]string{parsed.Command}, parsed.Args...)
+		parsed.Command = "run"
 	}
 
 	if parsed.Options.Version {
@@ -160,4 +167,37 @@ func Run(ctx context.Context, args []string, argv0 string) (int, error) {
 		Prompt:  app.Prompt,
 		Options: parsed.Options,
 	}, parsed.Command, parsed.Args)
+}
+
+func isProviderShortcut(name string, catalog providers.Catalog) bool {
+	if name == "" {
+		return false
+	}
+	known := map[string]struct{}{
+		"kimi":       {},
+		"zai":        {},
+		"zai-cn":     {},
+		"minimax":    {},
+		"minimax-cn": {},
+		"moonshot":   {},
+		"ve":         {},
+		"deepseek":   {},
+		"mimo":       {},
+		"alibaba":    {},
+		"alibaba-us": {},
+		"alibaba-cn": {},
+		"ollama":     {},
+		"lmstudio":   {},
+		"llamacpp":   {},
+		"native":     {},
+		"openrouter": {},
+		"custom":     {},
+	}
+	if _, ok := known[name]; ok {
+		return true
+	}
+	if _, ok := catalog.Get(name); ok {
+		return true
+	}
+	return false
 }

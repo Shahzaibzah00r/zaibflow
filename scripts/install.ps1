@@ -89,6 +89,23 @@ function Write-CmdLauncher {
   Set-Content -Path $FilePath -Value $content -Encoding Ascii
 }
 
+function Ensure-Claude {
+  $claude = Get-Command 'claude' -ErrorAction SilentlyContinue
+  if ($claude) {
+    return
+  }
+
+  Write-Host "Claude Code CLI is required."
+  Write-Host ""
+  Write-Host "Please install Claude Code CLI manually:"
+  Write-Host "  See https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview"
+  Write-Host ""
+  Write-Host "After installing Claude Code, re-run this installer."
+  exit 1
+}
+
+Ensure-Claude
+
 $arch = Get-Architecture
 $assetName = "zaibflow_windows_${arch}.zip"
 $assetUrl = Get-ReleaseAssetUrl -Asset $assetName
@@ -112,9 +129,20 @@ Write-CmdLauncher -FilePath (Join-Path $BinDir 'zf-custom.cmd') -Args @('run', '
 
 Ensure-UserPath -PathEntry $BinDir
 
-Write-Host "ZaibFlow installed to: $BinDir"
-Write-Host 'Next: zaibflow init'
-Write-Host 'Examples:'
-Write-Host '  zaibflow run kimi'
-Write-Host '  zaibflow run openrouter <alias>'
-Write-Host '  zaibflow run ollama'
+Write-Host ""
+Write-Host "Verifying install..."
+$zaibflow = Get-Command 'zaibflow' -ErrorAction SilentlyContinue
+if ($zaibflow) {
+  & zaibflow --version
+} else {
+  Write-Warning "zaibflow not found on PATH in this session. Restart your terminal."
+}
+
+Write-Host ""
+Write-Host "ZaibFlow installed successfully!"
+Write-Host ""
+Write-Host "Next commands:"
+Write-Host "  zaibflow config"
+Write-Host "  zaibflow kimi --bp"
+Write-Host "  zaibflow zai --bp"
+Write-Host "  zf-kimi --bp"

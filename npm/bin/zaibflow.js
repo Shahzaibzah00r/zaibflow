@@ -14,12 +14,21 @@ import { extract as tarExtract } from 'tar';
 const OWNER = 'Shahzaibzah00r';
 const REPO = 'zaibflow';
 const BIN_NAME = 'zaibflow';
+
 const WINDOWS_LAUNCHERS = [
     ['zf-kimi.cmd', ['run', 'kimi']],
     ['zf-or.cmd', ['run', 'openrouter']],
     ['zf-zai.cmd', ['run', 'zai']],
     ['zf-local.cmd', ['run', 'ollama']],
     ['zf-custom.cmd', ['run', 'custom']],
+];
+
+const UNIX_LAUNCHERS = [
+    ['zf-kimi', ['run', 'kimi']],
+    ['zf-or', ['run', 'openrouter']],
+    ['zf-zai', ['run', 'zai']],
+    ['zf-local', ['run', 'ollama']],
+    ['zf-custom', ['run', 'custom']],
 ];
 
 const args = process.argv.slice(2);
@@ -32,6 +41,8 @@ await ensureInstalled({ platform, arch, installDir, binaryPath });
 
 if (platform === 'win32') {
     await createWindowsLaunchers(installDir, binaryPath);
+} else {
+    await createUnixLaunchers(installDir);
 }
 
 if (args.length === 0) {
@@ -67,7 +78,11 @@ function getInstallDir(currentPlatform) {
         const localAppData = process.env.LOCALAPPDATA || path.join(os.homedir(), 'AppData', 'Local');
         return path.join(localAppData, 'Programs', 'ZaibFlow', 'bin');
     }
-    return path.join(os.homedir(), '.local', 'bin');
+    const home = os.homedir();
+    if (currentPlatform === 'darwin') {
+        return path.join(home, 'bin');
+    }
+    return path.join(home, '.local', 'bin');
 }
 
 async function ensureInstalled({ platform: currentPlatform, arch: currentArch, installDir: dir, binaryPath: binPath }) {
@@ -146,6 +161,15 @@ async function createWindowsLaunchers(installDir, binaryPath) {
     }
 }
 
+async function createUnixLaunchers(installDir) {
+    for (const [fileName, commandArgs] of UNIX_LAUNCHERS) {
+        const content = `#!/usr/bin/env bash\nexec zaibflow ${commandArgs.join(' ')} "$@"\n`;
+        const filePath = path.join(installDir, fileName);
+        await writeTextFile(filePath, content);
+        await chmod(filePath, 0o755).catch(() => { });
+    }
+}
+
 async function writeTextFile(filePath, content) {
     await mkdir(path.dirname(filePath), { recursive: true });
     await rm(filePath, { force: true }).catch(() => { });
@@ -155,11 +179,12 @@ async function writeTextFile(filePath, content) {
 function printInstallSummary(installDir) {
     const lines = [
         `ZaibFlow installed to: ${installDir}`,
-        'Next: zaibflow init',
-        'Examples:',
-        '  zaibflow run kimi',
-        '  zaibflow run openrouter <alias>',
-        '  zaibflow run ollama',
+        '',
+        'Next commands:',
+        '  zaibflow config',
+        '  zaibflow kimi --bp',
+        '  zaibflow zai --bp',
+        '  zf-kimi --bp',
     ];
     console.log(lines.join('\n'));
 }
