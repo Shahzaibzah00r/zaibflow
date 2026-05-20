@@ -153,6 +153,12 @@ func copyExecutable(src, dst string) error {
 	if err := os.MkdirAll(filepath.Dir(dst), 0o755); err != nil {
 		return err
 	}
+	// Skip copying if destination is the same file (e.g. running binary on Windows).
+	if srcInfo, err := os.Stat(src); err == nil {
+		if dstInfo, err := os.Stat(dst); err == nil && os.SameFile(srcInfo, dstInfo) {
+			return nil
+		}
+	}
 	data, err := os.ReadFile(src)
 	if err != nil {
 		return err
