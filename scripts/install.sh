@@ -92,8 +92,17 @@ ensure_claude() {
     if command -v claude >/dev/null 2>&1; then
       return 0
     fi
-    echo "error: Claude Code CLI installation failed or is not on PATH." >&2
-    exit 1
+    # Claude may have been installed to a directory not yet on PATH in this session.
+    for dir in "$HOME/.local/bin" "/usr/local/bin"; do
+      if [[ -x "$dir/claude" ]]; then
+        echo "Claude Code CLI installed to $dir but not on current PATH."
+        add_to_path "$dir"
+        return 0
+      fi
+    done
+    echo "warning: Claude Code CLI installation may have succeeded but is not on PATH." >&2
+    echo "         Restart your terminal after this install finishes." >&2
+    return 0
   fi
 
   echo "Please install Claude Code CLI manually:"
@@ -167,8 +176,8 @@ exec zaibflow "$@"
 EOF
   chmod +x "${bin_dir}/zf"
 
-  local launchers=("zf-kimi" "zf-zai" "zf-or" "zf-local")
-  local targets=("kimi" "zai" "openrouter" "ollama")
+  local launchers=("zf-kimi" "zf-zai" "zf-or" "zf-local" "zf-custom")
+  local targets=("kimi" "zai" "openrouter" "ollama" "custom")
 
   for i in "${!launchers[@]}"; do
     local name="${launchers[$i]}"

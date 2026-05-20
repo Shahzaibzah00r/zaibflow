@@ -13,29 +13,38 @@
 
 ### macOS / Linux
 
+Open your terminal and run:
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Shahzaibzah00r/zaibflow/main/scripts/install.sh | bash
 ```
 
-### Windows
+### Windows (PowerShell)
+
+Open **PowerShell** and run:
 
 ```powershell
 irm https://raw.githubusercontent.com/Shahzaibzah00r/zaibflow/main/scripts/install.ps1 | iex
 ```
 
+> `irm` = `Invoke-RestMethod` (downloads the script)  
+> `iex` = `Invoke-Expression` (runs the script)
+
 ### npm / npx
+
+Works on any platform with Node.js 18+:
 
 ```bash
 npx zaibflow
 ```
 
-Or install globally:
+Or install globally so `zaibflow` and `zf` are always available:
 
 ```bash
 npm install -g zaibflow
 ```
 
-> ZaibFlow requires Claude Code CLI. The installer checks for it automatically and guides you if it's missing.
+> ZaibFlow requires Claude Code CLI. The installer checks for it automatically and installs it if it's missing (macOS/Linux). On Windows it will guide you if it's missing.
 
 ## What is ZaibFlow?
 
@@ -51,20 +60,22 @@ ZaibFlow is a CLI tool and launcher ecosystem for Claude Code users who want fle
 ```bash
 zaibflow config              # Configure a provider
 zaibflow kimi --bp           # Run Kimi K2 with permission bypass
-zaibflow zai --bp            # Run Z.AI with permission bypass
+zaibflow zai --bp            # Run Z.A.I with permission bypass
 zaibflow openrouter <alias> --bp
 zaibflow ollama --bp
+zaibflow custom <name> --bp
 zf --help                    # Main shortcut, same as zaibflow
 zf-kimi --bp                 # Launcher shortcut
 zf-zai --bp
 zf-or <alias> --bp
 zf-local --bp
+zf-custom --bp
 ```
 
 ## Supported Providers
 
 - **Kimi** (kimi-k2.5)
-- **Z.AI** (glm-5)
+- **Z.A.I** (glm-5)
 - **OpenRouter** (100+ models)
 - **Ollama** (local models)
 - **DeepSeek**
@@ -79,6 +90,7 @@ zf-local --bp
 
 - **macOS / Linux**: The installer prefers `$HOME/bin`, falling back to `$HOME/.local/bin`. It adds the directory to your shell PATH automatically.
 - **Windows**: The installer places binaries in `%LOCALAPPDATA%\Programs\ZaibFlow\bin` and updates your User PATH automatically.
+- **npm/npx**: The first run downloads the correct native binary for your platform automatically. No manual PATH setup needed.
 
 ## Building from Source
 
@@ -103,8 +115,9 @@ go install github.com/Shahzaibzah00r/zaibflow/cmd/zaibflow@latest
 
 ## Troubleshooting
 
-- If `zaibflow` is not found after install, restart your terminal so PATH changes take effect.
+- If `zaibflow` is not found after install, **restart your terminal** so PATH changes take effect.
 - If provider launchers are missing, run `zaibflow install` to re-generate shims.
+- If `npx zaibflow` shows a 404, make sure you are using npm 18+ and have a working internet connection.
 
 ## Contributing
 
