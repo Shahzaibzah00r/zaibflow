@@ -44,7 +44,7 @@ Or install globally so `zaibflow` and `zf` are always available:
 npm install -g zaibflow
 ```
 
-> ZaibFlow requires Claude Code CLI. The installer checks for it automatically and installs it if it's missing (macOS/Linux). On Windows it will guide you if it's missing.
+> ZaibFlow requires Claude Code CLI. The installer checks for it automatically and installs it if it's missing (macOS/Linux/Windows).
 
 ## What is ZaibFlow?
 
@@ -113,11 +113,20 @@ go install github.com/Shahzaibzah00r/zaibflow/cmd/zaibflow@latest
 - `ZAIBFLOW_SKIP_SELF_UPDATE=1` — disable automatic self-update during `install`.
 - `ZAIBFLOW_RELEASE_BASE_URL` — override release base URL to an alternate host.
 
+## Requirements
+
+- **Claude Code CLI** — ZaibFlow auto-installs it for you on macOS/Linux/Windows. If you prefer to install manually:
+  - **macOS/Linux**: `curl -fsSL https://claude.ai/install.sh | bash`
+  - **Windows (PowerShell)**: `irm https://claude.ai/install.ps1 | iex`
+  - **Windows (CMD)**: `curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd`
+- **Node.js 18+** (only for npm/npx install)
+
 ## Troubleshooting
 
 - If `zaibflow` is not found after install, **restart your terminal** so PATH changes take effect.
 - If provider launchers are missing, run `zaibflow install` to re-generate shims.
 - If `npx zaibflow` shows a 404, make sure you are using npm 18+ and have a working internet connection.
+- On Windows, if Claude Code CLI installs but zaibflow still says it's missing, add `%USERPROFILE%\.local\bin` to your User PATH and restart your terminal.
 
 ## Contributing
 

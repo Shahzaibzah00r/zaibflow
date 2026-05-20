@@ -71,7 +71,7 @@ ZaibFlow is a CLI tool and launcher ecosystem for Claude Code users who want fle
 - Run Claude Code with **Kimi K2**, **Z.A.I**, **OpenRouter**, **Ollama**, **DeepSeek**, **MiniMax**, and more
 - Skip permission prompts with `--bp` or `--yolo`
 - Use short launcher commands like `zf-kimi` instead of typing full paths
-- Auto-install Claude Code CLI if it's missing (macOS/Linux)
+- Auto-install Claude Code CLI if it's missing (macOS/Linux/Windows)
 
 ## Supported Providers
 
@@ -89,8 +89,11 @@ ZaibFlow is a CLI tool and launcher ecosystem for Claude Code users who want fle
 
 ## Requirements
 
-- [Claude Code CLI](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview) — ZaibFlow checks for it automatically and installs it if missing (macOS/Linux)
-- Node.js 18+ (for npm/npx install only)
+- **Claude Code CLI** — ZaibFlow auto-installs it for you on macOS/Linux/Windows. If you prefer to install manually:
+  - **macOS/Linux**: `curl -fsSL https://claude.ai/install.sh | bash`
+  - **Windows (PowerShell)**: `irm https://claude.ai/install.ps1 | iex`
+  - **Windows (CMD)**: `curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd`
+- **Node.js 18+** (only for npm/npx install)
 
 ## Platform Support
 
@@ -101,7 +104,7 @@ ZaibFlow is a CLI tool and launcher ecosystem for Claude Code users who want fle
 ## Install Methods
 
 - **macOS/Linux**: `curl -fsSL https://raw.githubusercontent.com/Shahzaibzah00r/zaibflow/main/scripts/install.sh | bash`
-- **Windows**: `irm https://raw.githubusercontent.com/Shahzaibzah00r/zaibflow/main/scripts/install.ps1 | iex`
+- **Windows (PowerShell)**: `irm https://raw.githubusercontent.com/Shahzaibzah00r/zaibflow/main/scripts/install.ps1 | iex`
 - **npm**: `npm install -g zaibflow`
 - **npx**: `npx zaibflow`
 
@@ -110,6 +113,7 @@ ZaibFlow is a CLI tool and launcher ecosystem for Claude Code users who want fle
 - If `zaibflow` is not found after install, **restart your terminal** so PATH changes take effect.
 - If you see a 404 error on first run, check your internet connection and try again.
 - Run `zaibflow install` to re-generate launcher shims if they are missing.
+- On Windows, if Claude Code CLI installs but zaibflow still says it's missing, add `%USERPROFILE%\.local\bin` to your User PATH and restart your terminal.
 
 ## Links
 

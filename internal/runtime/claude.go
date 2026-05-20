@@ -57,6 +57,17 @@ func FindRealClaude(paths config.Paths) (string, error) {
 				return candidate, nil
 			}
 		}
+		// Claude's Windows installer places the binary in ~/.local/bin
+		// even when that directory is not on PATH yet.
+		home, _ := os.UserHomeDir()
+		if home != "" {
+			localBinClaude := filepath.Join(home, ".local", "bin", "claude.exe")
+			if info, err := os.Stat(localBinClaude); err == nil && !info.IsDir() {
+				if !samePath(localBinClaude, zaibflowPath) {
+					return localBinClaude, nil
+				}
+			}
+		}
 		fallback := filepath.Join(paths.BinDir, "claude-real")
 		if info, err := os.Stat(fallback); err == nil && !info.IsDir() {
 			if (selfResolved == "" || !samePath(fallback, selfResolved)) && !samePath(fallback, zaibflowPath) {
