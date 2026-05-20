@@ -56,11 +56,24 @@ verify_checksum() {
   local asset_path="$1"
   local checksums_path="$2"
   local asset_name
+  local checksum_line
+
   asset_name="$(basename "$asset_path")"
+
+  checksum_line="$(grep "${asset_name}$" "$checksums_path" || true)"
+
+  if [[ -z "$checksum_line" ]]; then
+    echo "warning: checksum for ${asset_name} not found, skipping verification" >&2
+    return
+  fi
+
+  # Normalize "./file" to "file" because we run the check inside the asset directory.
+  checksum_line="${checksum_line// \.\// }"
+
   if command -v shasum >/dev/null 2>&1; then
-    grep " ${asset_name}\$" "$checksums_path" | (cd "$(dirname "$asset_path")" && shasum -a 256 -c -)
+    echo "$checksum_line" | (cd "$(dirname "$asset_path")" && shasum -a 256 -c -)
   elif command -v sha256sum >/dev/null 2>&1; then
-    grep " ${asset_name}\$" "$checksums_path" | (cd "$(dirname "$asset_path")" && sha256sum -c -)
+    echo "$checksum_line" | (cd "$(dirname "$asset_path")" && sha256sum -c -)
   else
     echo "warning: no checksum tool found, skipping verification" >&2
   fi
