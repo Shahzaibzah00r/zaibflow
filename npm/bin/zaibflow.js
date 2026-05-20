@@ -106,11 +106,11 @@ function releaseAssetName(currentPlatform, currentArch) {
 }
 
 function releaseAssetUrl(assetName) {
-    const baseUrl = (process.env.ZAIBFLOW_RELEASE_BASE_URL || process.env.CLOTHER_RELEASE_BASE_URL || '').trim().replace(/\/$/, '');
+    const baseUrl = (process.env.ZAIBFLOW_RELEASE_BASE_URL || '').trim().replace(/\/$/, '');
     if (baseUrl) {
         return `${baseUrl}/${assetName}`;
     }
-    const version = (process.env.ZAIBFLOW_VERSION || process.env.CLOTHER_VERSION || 'latest').trim();
+    const version = (process.env.ZAIBFLOW_VERSION || 'latest').trim();
     if (version && version !== 'latest') {
         return `https://github.com/${OWNER}/${REPO}/releases/download/${version}/${assetName}`;
     }
