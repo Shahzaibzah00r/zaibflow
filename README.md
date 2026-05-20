@@ -29,7 +29,22 @@ irm https://raw.githubusercontent.com/Shahzaibzah00r/zaibflow/main/scripts/insta
 npx zaibflow
 ```
 
+Or install globally:
+
+```bash
+npm install -g zaibflow
+```
+
 > ZaibFlow requires Claude Code CLI. The installer checks for it automatically and guides you if it's missing.
+
+## What is ZaibFlow?
+
+ZaibFlow is a CLI tool and launcher ecosystem for Claude Code users who want flexibility across AI providers. Instead of being locked into a single model, you can:
+
+- Run Claude Code with **Kimi K2**, **Z.AI**, **OpenRouter**, **Ollama**, **DeepSeek**, **MiniMax**, and more
+- Skip permission prompts with `--bp` or `--yolo`
+- Use short launcher commands like `zf-kimi` instead of typing full paths
+- Auto-install Claude Code CLI if it's missing
 
 ## Usage
 
@@ -38,11 +53,27 @@ zaibflow config              # Configure a provider
 zaibflow kimi --bp           # Run Kimi K2 with permission bypass
 zaibflow zai --bp            # Run Z.AI with permission bypass
 zaibflow openrouter <alias> --bp
+zaibflow ollama --bp
+zf --help                    # Main shortcut, same as zaibflow
 zf-kimi --bp                 # Launcher shortcut
 zf-zai --bp
 zf-or <alias> --bp
 zf-local --bp
 ```
+
+## Supported Providers
+
+- **Kimi** (kimi-k2.5)
+- **Z.AI** (glm-5)
+- **OpenRouter** (100+ models)
+- **Ollama** (local models)
+- **DeepSeek**
+- **MiniMax**
+- **Moonshot**
+- **Alibaba**
+- **Xiaomi MiMo**
+- **VolcEngine**
+- And more...
 
 ## Platform-Specific Notes
 

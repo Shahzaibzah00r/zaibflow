@@ -1,15 +1,49 @@
 {
   "name": "zaibflow",
-  "version": "0.1.0",
+  "version": "0.1.2",
+  "description": "Agentic AI Runtime for Claude Code — run any AI provider through Claude Code",
   "private": false,
   "type": "module",
   "license": "MIT",
+  "author": "Shahzaib <shahzaibzahoor7@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shahzaibzah00r/zaibflow.git",
+    "directory": "npm"
+  },
+  "homepage": "https://github.com/Shahzaibzah00r/zaibflow#readme",
+  "bugs": {
+    "url": "https://github.com/Shahzaibzah00r/zaibflow/issues"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "ai",
+    "llm",
+    "cli",
+    "provider",
+    "openrouter",
+    "ollama",
+    "kimi",
+    "zai",
+    "deepseek",
+    "minimax",
+    "moonshot",
+    "anthropic",
+    "coding-assistant",
+    "ai-cli",
+    "llm-cli"
+  ],
   "engines": {
     "node": ">=18"
   },
   "bin": {
     "zaibflow": "./bin/zaibflow.js"
   },
+  "files": [
+    "bin",
+    "README.md"
+  ],
   "dependencies": {
     "extract-zip": "^2.0.1",
     "tar": "^7.5.0"
