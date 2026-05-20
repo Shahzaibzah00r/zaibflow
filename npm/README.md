@@ -1,6 +1,10 @@
-# ZaibFlow
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Shahzaibzah00r/zaibflow/main/assets/logo.png" width="220" alt="ZaibFlow logo">
+</p>
 
-ZaibFlow is an **Agentic AI Runtime for Claude Code** — a cross-platform CLI that lets you run Claude Code with any AI provider. Switch between Kimi, Z.AI, OpenRouter, Ollama, and 10+ providers with a single command.
+<h1 align="center">ZaibFlow</h1>
+
+<p align="center"><strong>Agentic AI Runtime for Claude Code</strong> — a cross-platform CLI that lets you run Claude Code with any AI provider. Switch between Kimi, Z.AI, OpenRouter, Ollama, and 10+ providers with a single command.</p>
 
 ## Quick Start
 

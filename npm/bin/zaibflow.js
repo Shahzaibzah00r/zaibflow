@@ -88,11 +88,21 @@ function getInstallDir(currentPlatform) {
 }
 
 async function ensureInstalled({ platform: currentPlatform, arch: currentArch, installDir: dir, binaryPath: binPath }) {
+    let needsInstall = false;
     try {
         await access(binPath);
-        return;
+        const versionResult = spawnSync(binPath, ['--version'], { encoding: 'utf8', timeout: 5000 });
+        const version = (versionResult.stdout || '').trim();
+        // Detect old Clother-based binary (v3.0.9) or any unrecognized version
+        if (version.includes('3.0.9') || !version.includes('ZaibFlow')) {
+            needsInstall = true;
+        }
     } catch {
-        // Install from the latest GitHub release when missing.
+        needsInstall = true;
+    }
+
+    if (!needsInstall) {
+        return;
     }
 
     await mkdir(dir, { recursive: true });
