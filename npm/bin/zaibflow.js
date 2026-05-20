@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { access, chmod, copyFile, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { access, chmod, copyFile, mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { createWriteStream } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -34,18 +34,29 @@ const UNIX_LAUNCHERS = [
     ['zf-custom', ['run', 'custom']],
 ];
 
+const DEBUG = process.env.ZAIBFLOW_DEBUG === '1';
+
+function debug(...args) {
+    if (DEBUG) {
+        console.error('[zaibflow npm]', ...args);
+    }
+}
+
 const args = process.argv.slice(2);
 const platform = detectPlatform();
 const arch = detectArch();
 const installDir = getInstallDir(platform);
 const binaryPath = path.join(installDir, platform === 'win32' ? `${BIN_NAME}.exe` : BIN_NAME);
 
-await ensureInstalled({ platform, arch, installDir, binaryPath });
+const { installed, updated } = await ensureInstalled({ platform, arch, installDir, binaryPath });
 
-if (platform === 'win32') {
-    await createWindowsLaunchers(installDir, binaryPath);
-} else {
-    await createUnixLaunchers(installDir);
+if (installed || updated) {
+    debug('Binary was installed/updated; recreating launchers');
+    if (platform === 'win32') {
+        await createWindowsLaunchers(installDir, binaryPath);
+    } else {
+        await createUnixLaunchers(installDir);
+    }
 }
 
 if (args.length === 0) {
@@ -91,22 +102,35 @@ function getInstallDir(currentPlatform) {
 async function ensureInstalled({ platform: currentPlatform, arch: currentArch, installDir: dir, binaryPath: binPath }) {
     let needsInstall = false;
     let localVersion = null;
+    let binaryExists = false;
+
     try {
-        await access(binPath);
+        const info = await stat(binPath);
+        binaryExists = info.isFile() && info.size > 0;
+        debug('Binary exists:', binaryExists, 'size:', info.size);
+    } catch {
+        binaryExists = false;
+        debug('Binary does not exist');
+    }
+
+    if (binaryExists) {
         const versionResult = spawnSync(binPath, ['--version'], { encoding: 'utf8', timeout: 5000 });
-        const version = (versionResult.stdout || '').trim();
+        const version = (versionResult.stdout || versionResult.stderr || '').trim();
+        debug('Local version output:', version);
         // Detect old Clother-based binary (v3.0.9) or any unrecognized version
         if (version.includes('3.0.9') || !version.includes('ZaibFlow')) {
+            console.log('ZaibFlow binary is outdated or unrecognized. Re-downloading...');
             needsInstall = true;
         } else {
             localVersion = parseVersion(version);
         }
-    } catch {
+    } else {
         needsInstall = true;
     }
 
     if (!needsInstall && localVersion) {
         const latestVersion = await getLatestVersion();
+        debug('Latest version:', latestVersion ? formatVersion(latestVersion) : 'unknown');
         if (latestVersion && isNewer(latestVersion, localVersion)) {
             console.log(`ZaibFlow update available: v${formatVersion(localVersion)} -> v${formatVersion(latestVersion)}. Downloading...`);
             needsInstall = true;
@@ -114,7 +138,7 @@ async function ensureInstalled({ platform: currentPlatform, arch: currentArch, i
     }
 
     if (!needsInstall) {
-        return;
+        return { installed: false, updated: false };
     }
 
     await mkdir(dir, { recursive: true });
@@ -123,7 +147,15 @@ async function ensureInstalled({ platform: currentPlatform, arch: currentArch, i
     const archivePath = path.join(workDir, assetName);
     const archiveUrl = releaseAssetUrl(assetName);
 
-    await downloadFile(archiveUrl, archivePath);
+    debug('Downloading from:', archiveUrl);
+
+    try {
+        await downloadFile(archiveUrl, archivePath);
+    } catch (err) {
+        console.error(`Failed to download ${assetName} from ${archiveUrl}`);
+        console.error(err.message);
+        throw err;
+    }
 
     if (currentPlatform === 'win32') {
         await extractZip(archivePath, { dir: workDir });
@@ -135,6 +167,8 @@ async function ensureInstalled({ platform: currentPlatform, arch: currentArch, i
 
     await chmod(binPath, 0o755).catch(() => { });
     await rm(workDir, { recursive: true, force: true });
+
+    return { installed: true, updated: binaryExists };
 }
 
 function releaseAssetName(currentPlatform, currentArch) {
@@ -164,7 +198,7 @@ async function downloadFile(url, destination) {
         },
     });
     if (!response.ok) {
-        throw new Error(`download failed: ${response.status} ${response.statusText}`);
+        throw new Error(`download failed: ${response.status} ${response.statusText} for ${url}`);
     }
     if (!response.body) {
         throw new Error('download failed: empty response body');
@@ -269,6 +303,8 @@ function printInstallSummary(installDir) {
         '  zaibflow kimi --bp',
         '  zaibflow zai --bp',
         '  zf-kimi --bp',
+        '',
+        'Tip: If zaibflow is not found, restart your terminal so PATH changes take effect.',
     ];
     console.log(lines.join('\n'));
 }
