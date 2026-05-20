@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
-	"runtime"
 	"strings"
+
+	"golang.org/x/term"
 )
 
 type Prompter struct {
@@ -38,25 +38,25 @@ func (p *Prompter) Prompt(label, defaultValue string) (string, error) {
 }
 
 func (p *Prompter) PromptSecret(label string) (string, error) {
-	tty, err := os.OpenFile("/dev/tty", os.O_RDWR, 0)
-	if err != nil {
-		return p.Prompt(label, "")
-	}
-	defer tty.Close()
+	// Print the prompt first
+	fmt.Fprintf(p.Out, "%s: ", label)
 
-	fmt.Fprintf(tty, "%s: ", label)
-	if err := setTTYEcho(false); err != nil {
-		return p.Prompt(label, "")
+	// If the input is a file and a terminal, use term.ReadPassword to hide input.
+	if file, ok := p.In.(*os.File); ok {
+		if term.IsTerminal(int(file.Fd())) {
+			// ReadPassword reads from the terminal connected to the given file descriptor.
+			bytes, err := term.ReadPassword(int(file.Fd()))
+			// After ReadPassword, echoing is restored and no newline is printed, so print one.
+			fmt.Fprintln(p.Out)
+			if err == nil {
+				return strings.TrimSpace(string(bytes)), nil
+			}
+			// fallthrough to fallback Prompt on error
+		}
 	}
-	defer setTTYEcho(true)
 
-	reader := bufio.NewReader(tty)
-	value, readErr := reader.ReadString('\n')
-	fmt.Fprintln(tty)
-	if readErr != nil && readErr != io.EOF {
-		return "", readErr
-	}
-	return strings.TrimSpace(value), nil
+	// Fallback to normal prompt (visible input)
+	return p.Prompt(label, "")
 }
 
 func (p *Prompter) Confirm(label string, defaultYes bool) (bool, error) {
@@ -75,22 +75,4 @@ func (p *Prompter) Confirm(label string, defaultYes bool) (bool, error) {
 	return strings.HasPrefix(answer, "y"), nil
 }
 
-func setTTYEcho(enabled bool) error {
-	args := []string{}
-	switch runtime.GOOS {
-	case "darwin", "freebsd":
-		args = append(args, "-f", "/dev/tty")
-	default:
-		args = append(args, "-F", "/dev/tty")
-	}
-	if enabled {
-		args = append(args, "echo")
-	} else {
-		args = append(args, "-echo")
-	}
-	cmd := exec.Command("stty", args...)
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = io.Discard
-	cmd.Stderr = io.Discard
-	return cmd.Run()
-}
+// setTTYEcho removed: platform-specific stty usage replaced by golang.org/x/term
