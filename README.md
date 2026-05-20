@@ -124,5 +124,5 @@ Maintained by Shahzaib — contact: <shahzaibzahoor7@gmail.com>
 ## License
 
 MIT
- 
+
 ZaibFlow is based on the open-source Clother project by jolehuit, licensed under MIT.

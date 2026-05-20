@@ -6,19 +6,19 @@
 zaibflow run openrouter my-alias
 ```
 
-2. Run a provider with an explicit model:
+1. Run a provider with an explicit model:
 
 ```bash
 zaibflow run ollama --model qwen3-coder
 ```
 
-3. Create launchers / re-install helpers:
+1. Create launchers / re-install helpers:
 
 ```bash
 zaibflow install
 ```
 
-4. Update the ZaibFlow binary:
+1. Update the ZaibFlow binary:
 
 ```bash
 zaibflow update

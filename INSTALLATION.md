@@ -163,12 +163,14 @@ zf-local --version
 ### Permission Denied
 
 **Linux/macOS:**
+
 ```bash
 # Make binary executable
 chmod +x ~/.local/bin/zaibflow
 ```
 
 **Windows:**
+
 - Right-click PowerShell → "Run as administrator"
 - Re-run installer
 
@@ -177,6 +179,7 @@ chmod +x ~/.local/bin/zaibflow
 **Add to PATH:**
 
 Linux/macOS:
+
 ```bash
 # Add to ~/.bashrc or ~/.zshrc
 export PATH="$HOME/.local/bin:$PATH"
@@ -184,6 +187,7 @@ source ~/.bashrc  # or ~/.zshrc
 ```
 
 **Windows:**
+
 - Search "Environment Variables"
 - Add `C:\Program Files\ZaibFlow\bin` to System PATH
 - Restart PowerShell/Terminal
@@ -237,7 +241,7 @@ zaibflow install
 ## Support
 
 **Issues:** [GitHub Issues](https://github.com/Shahzaibzah00r/zaibflow/issues)
-**Email:** shahzaibzahoor7@gmail.com
+**Email:** <shahzaibzahoor7@gmail.com>
 
 ## License
 
