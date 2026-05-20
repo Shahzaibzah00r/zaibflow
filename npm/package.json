@@ -1,6 +1,6 @@
 {
   "name": "zaibflow",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Agentic AI Runtime for Claude Code — run any AI provider through Claude Code",
   "private": false,
   "type": "module",

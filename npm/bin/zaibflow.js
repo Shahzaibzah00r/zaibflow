@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { access, chmod, copyFile, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { access, chmod, copyFile, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { createWriteStream } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -14,6 +14,7 @@ import { extract as tarExtract } from 'tar';
 const OWNER = 'Shahzaibzah00r';
 const REPO = 'zaibflow';
 const BIN_NAME = 'zaibflow';
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 const WINDOWS_LAUNCHERS = [
     ['zf.cmd', []],
@@ -89,6 +90,7 @@ function getInstallDir(currentPlatform) {
 
 async function ensureInstalled({ platform: currentPlatform, arch: currentArch, installDir: dir, binaryPath: binPath }) {
     let needsInstall = false;
+    let localVersion = null;
     try {
         await access(binPath);
         const versionResult = spawnSync(binPath, ['--version'], { encoding: 'utf8', timeout: 5000 });
@@ -96,9 +98,19 @@ async function ensureInstalled({ platform: currentPlatform, arch: currentArch, i
         // Detect old Clother-based binary (v3.0.9) or any unrecognized version
         if (version.includes('3.0.9') || !version.includes('ZaibFlow')) {
             needsInstall = true;
+        } else {
+            localVersion = parseVersion(version);
         }
     } catch {
         needsInstall = true;
+    }
+
+    if (!needsInstall && localVersion) {
+        const latestVersion = await getLatestVersion();
+        if (latestVersion && isNewer(latestVersion, localVersion)) {
+            console.log(`ZaibFlow update available: v${formatVersion(localVersion)} -> v${formatVersion(latestVersion)}. Downloading...`);
+            needsInstall = true;
+        }
     }
 
     if (!needsInstall) {
@@ -159,6 +171,65 @@ async function downloadFile(url, destination) {
     }
     await mkdir(path.dirname(destination), { recursive: true });
     await pipeline(Readable.fromWeb(response.body), createWriteStream(destination));
+}
+
+async function getLatestVersion() {
+    const cacheDir = path.join(os.tmpdir(), 'zaibflow-npm-cache');
+    const cacheFile = path.join(cacheDir, 'latest-version.json');
+
+    try {
+        const cache = JSON.parse(await readFile(cacheFile, 'utf8'));
+        if (cache.timestamp && Date.now() - cache.timestamp < CACHE_TTL_MS) {
+            return parseVersion(cache.version);
+        }
+    } catch {
+        // cache missing or invalid
+    }
+
+    try {
+        const response = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/releases/latest`, {
+            headers: {
+                'User-Agent': 'zaibflow-npm-installer',
+                'Accept': 'application/vnd.github+json',
+            },
+            signal: AbortSignal.timeout(5000),
+        });
+        if (!response.ok) {
+            return null;
+        }
+        const data = await response.json();
+        const version = data.tag_name?.replace(/^v/, '');
+        if (version) {
+            await mkdir(cacheDir, { recursive: true });
+            await writeFile(cacheFile, JSON.stringify({ version, timestamp: Date.now() }), 'utf8');
+            return parseVersion(version);
+        }
+        return null;
+    } catch {
+        return null;
+    }
+}
+
+function parseVersion(versionString) {
+    const match = versionString.match(/v?(\d+)\.(\d+)\.(\d+)/);
+    if (!match) return null;
+    return {
+        major: parseInt(match[1], 10),
+        minor: parseInt(match[2], 10),
+        patch: parseInt(match[3], 10),
+    };
+}
+
+function formatVersion(v) {
+    if (!v) return 'unknown';
+    return `${v.major}.${v.minor}.${v.patch}`;
+}
+
+function isNewer(latest, current) {
+    if (!latest || !current) return false;
+    if (latest.major !== current.major) return latest.major > current.major;
+    if (latest.minor !== current.minor) return latest.minor > current.minor;
+    return latest.patch > current.patch;
 }
 
 async function createWindowsLaunchers(installDir, binaryPath) {
