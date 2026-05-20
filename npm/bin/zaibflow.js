@@ -9,7 +9,7 @@ import { Readable } from 'node:stream';
 import { spawnSync } from 'node:child_process';
 
 import extractZip from 'extract-zip';
-import tar from 'tar';
+import { extract as tarExtract } from 'tar';
 
 const OWNER = 'Shahzaibzah00r';
 const REPO = 'zaibflow';
@@ -90,7 +90,7 @@ async function ensureInstalled({ platform: currentPlatform, arch: currentArch, i
         await extractZip(archivePath, { dir: workDir });
         await copyFile(path.join(workDir, `${BIN_NAME}.exe`), binPath);
     } else {
-        await tar.x({ file: archivePath, cwd: workDir });
+        await tarExtract({ file: archivePath, cwd: workDir });
         await copyFile(path.join(workDir, BIN_NAME), binPath);
     }
 
