@@ -121,6 +121,16 @@ Expand-Archive -Path $zipPath -DestinationPath $extractDir -Force
 New-Item -ItemType Directory -Path $BinDir -Force | Out-Null
 Copy-Item -Path (Join-Path $extractDir $BinaryName) -Destination (Join-Path $BinDir $BinaryName) -Force
 
+# Main shortcut: zf behaves exactly like zaibflow
+$content = @(
+  '@echo off',
+  'setlocal',
+  ('"%~dp0' + $BinaryName + '" %*'),
+  'exit /b %errorlevel%',
+  ''
+) -join "`r`n"
+Set-Content -Path (Join-Path $BinDir 'zf.cmd') -Value $content -Encoding Ascii
+
 Write-CmdLauncher -FilePath (Join-Path $BinDir 'zf-kimi.cmd') -Args @('run', 'kimi')
 Write-CmdLauncher -FilePath (Join-Path $BinDir 'zf-or.cmd') -Args @('run', 'openrouter')
 Write-CmdLauncher -FilePath (Join-Path $BinDir 'zf-zai.cmd') -Args @('run', 'zai')

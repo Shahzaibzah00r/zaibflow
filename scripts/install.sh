@@ -159,6 +159,14 @@ add_to_path() {
 
 create_launchers() {
   local bin_dir="$1"
+
+  # Main shortcut
+  cat > "${bin_dir}/zf" <<'EOF'
+#!/usr/bin/env bash
+exec zaibflow "$@"
+EOF
+  chmod +x "${bin_dir}/zf"
+
   local launchers=("zf-kimi" "zf-zai" "zf-or" "zf-local")
   local targets=("kimi" "zai" "openrouter" "ollama")
 

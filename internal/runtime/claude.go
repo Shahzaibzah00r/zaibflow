@@ -25,7 +25,13 @@ func RunClaudeShim(ctx context.Context, paths config.Paths, args []string) (int,
 	}
 	claudePath, err := FindRealClaude(paths)
 	if err != nil {
-		return 1, err
+		if ensureErr := EnsureClaude(ctx); ensureErr != nil {
+			return 1, ensureErr
+		}
+		claudePath, err = FindRealClaude(paths)
+		if err != nil {
+			return 1, err
+		}
 	}
 	if err := session.RestoreStale(paths); err != nil {
 		return 1, err

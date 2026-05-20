@@ -16,6 +16,7 @@ const REPO = 'zaibflow';
 const BIN_NAME = 'zaibflow';
 
 const WINDOWS_LAUNCHERS = [
+    ['zf.cmd', []],
     ['zf-kimi.cmd', ['run', 'kimi']],
     ['zf-or.cmd', ['run', 'openrouter']],
     ['zf-zai.cmd', ['run', 'zai']],
@@ -24,6 +25,7 @@ const WINDOWS_LAUNCHERS = [
 ];
 
 const UNIX_LAUNCHERS = [
+    ['zf', []],
     ['zf-kimi', ['run', 'kimi']],
     ['zf-or', ['run', 'openrouter']],
     ['zf-zai', ['run', 'zai']],

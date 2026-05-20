@@ -47,6 +47,8 @@ func Sync(execPath string, paths config.Paths, catalog providers.Catalog, cfg *c
 	// only applies to per-alias/per-provider symlinks, never to these gateways.
 	desired["zf-or"] = struct{}{}
 	desired["zf-custom"] = struct{}{}
+	// Main shortcut: zf behaves exactly like zaibflow.
+	desired["zf"] = struct{}{}
 
 	if goruntime.GOOS == "windows" {
 		destBinary := filepath.Join(paths.BinDir, binaryName())

@@ -44,7 +44,13 @@ func Launch(ctx context.Context, paths config.Paths, target profiles.Target, arg
 
 	claudePath, err := FindRealClaude(paths)
 	if err != nil {
-		return 1, fmt.Errorf("real claude not found in PATH")
+		if ensureErr := EnsureClaude(ctx); ensureErr != nil {
+			return 1, ensureErr
+		}
+		claudePath, err = FindRealClaude(paths)
+		if err != nil {
+			return 1, fmt.Errorf("real claude not found in PATH")
+		}
 	}
 
 	if err := session.RestoreStale(paths); err != nil {

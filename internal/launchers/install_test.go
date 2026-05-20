@@ -47,7 +47,7 @@ func TestSyncCreatesBinaryAndLaunchers(t *testing.T) {
 	if err := Sync(execPath, paths, catalog, cfg, false); err != nil {
 		t.Fatal(err)
 	}
-	for _, name := range []string{"zaibflow", "claude", "zf-zai", "zf-native", "zf-local", "zf-or-kimi", "zf-myprovider", "zf-or", "zf-custom"} {
+	for _, name := range []string{"zaibflow", "claude", "zf", "zf-zai", "zf-native", "zf-local", "zf-or-kimi", "zf-myprovider", "zf-or", "zf-custom"} {
 		if _, err := os.Lstat(filepath.Join(paths.BinDir, name)); err != nil {
 			t.Fatalf("missing %s: %v", name, err)
 		}
@@ -104,7 +104,7 @@ func TestSyncHomebrewSkipsCopyAndUsesAbsoluteSymlinks(t *testing.T) {
 	}
 
 	// provider symlinks must exist and point to the Homebrew binary
-	for _, name := range []string{"claude", "zf-zai", "zf-native", "zf-local", "zf-or", "zf-custom"} {
+	for _, name := range []string{"claude", "zf", "zf-zai", "zf-native", "zf-local", "zf-or", "zf-custom"} {
 		link := filepath.Join(paths.BinDir, name)
 		target, err := os.Readlink(link)
 		if err != nil {
@@ -161,7 +161,7 @@ func TestSyncHomebrewSkipsDynamicProviderSymlinks(t *testing.T) {
 	}
 
 	// gateway symlinks must always be present
-	for _, name := range []string{"zf-or", "zf-custom"} {
+	for _, name := range []string{"zf", "zf-or", "zf-custom"} {
 		if _, err := os.Lstat(filepath.Join(paths.BinDir, name)); err != nil {
 			t.Fatalf("gateway symlink %s must always be created: %v", name, err)
 		}
