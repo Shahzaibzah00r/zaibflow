@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/jolehuit/clother/internal/app"
+	"github.com/Shahzaibzah00r/zaibflow/internal/app"
 )
 
 func main() {

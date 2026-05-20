@@ -4,9 +4,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jolehuit/clother/internal/config"
-	"github.com/jolehuit/clother/internal/profiles"
-	"github.com/jolehuit/clother/internal/providers"
+	"github.com/Shahzaibzah00r/zaibflow/internal/config"
+	"github.com/Shahzaibzah00r/zaibflow/internal/profiles"
+	"github.com/Shahzaibzah00r/zaibflow/internal/providers"
 )
 
 func TestBuildEnvForOpenRouter(t *testing.T) {

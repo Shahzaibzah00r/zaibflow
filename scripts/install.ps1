@@ -36,9 +36,6 @@ function Get-ReleaseAssetUrl {
   )
 
   $baseUrl = $env:ZAIBFLOW_RELEASE_BASE_URL
-  if (-not $baseUrl) {
-    $baseUrl = $env:CLOTHER_RELEASE_BASE_URL
-  }
   if ($baseUrl) {
     return ($baseUrl.TrimEnd('/') + '/' + $Asset)
   }

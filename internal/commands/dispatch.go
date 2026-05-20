@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/jolehuit/clother/internal/cli"
+	"github.com/Shahzaibzah00r/zaibflow/internal/cli"
 )
 
 func Dispatch(ctx context.Context, c Context, command string, args []string) (int, error) {

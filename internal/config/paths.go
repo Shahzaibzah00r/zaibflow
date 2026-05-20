@@ -29,11 +29,11 @@ func Detect(binOverride string) (Paths, error) {
 	xdgDataHome := getenv("XDG_DATA_HOME", filepath.Join(home, ".local", "share"))
 	xdgCacheHome := getenv("XDG_CACHE_HOME", filepath.Join(home, ".cache"))
 
-	configDir := getenvAny([]string{"ZAIBFLOW_CONFIG_DIR", "CLOTHER_CONFIG_DIR"}, filepath.Join(xdgConfigHome, "zaibflow"))
-	dataDir := getenvAny([]string{"ZAIBFLOW_DATA_DIR", "CLOTHER_DATA_DIR"}, filepath.Join(xdgDataHome, "zaibflow"))
-	cacheDir := getenvAny([]string{"ZAIBFLOW_CACHE_DIR", "CLOTHER_CACHE_DIR"}, filepath.Join(xdgCacheHome, "zaibflow"))
+	configDir := getenvAny([]string{"ZAIBFLOW_CONFIG_DIR"}, filepath.Join(xdgConfigHome, "zaibflow"))
+	dataDir := getenvAny([]string{"ZAIBFLOW_DATA_DIR"}, filepath.Join(xdgDataHome, "zaibflow"))
+	cacheDir := getenvAny([]string{"ZAIBFLOW_CACHE_DIR"}, filepath.Join(xdgCacheHome, "zaibflow"))
 
-	binDir := getenvAny([]string{"ZAIBFLOW_BIN", "CLOTHER_BIN"}, "")
+	binDir := getenvAny([]string{"ZAIBFLOW_BIN"}, "")
 	if binOverride != "" {
 		binDir = binOverride
 	}

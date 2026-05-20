@@ -9,9 +9,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jolehuit/clother/internal/config"
-	"github.com/jolehuit/clother/internal/providers"
-	"github.com/jolehuit/clother/internal/ui"
+	"github.com/Shahzaibzah00r/zaibflow/internal/config"
+	"github.com/Shahzaibzah00r/zaibflow/internal/providers"
+	"github.com/Shahzaibzah00r/zaibflow/internal/ui"
 )
 
 func TestRunInstallPreservesSameBinClaude(t *testing.T) {
@@ -24,8 +24,8 @@ func TestRunInstallPreservesSameBinClaude(t *testing.T) {
 	t.Setenv("XDG_DATA_HOME", filepath.Join(home, ".local", "share"))
 	t.Setenv("XDG_CACHE_HOME", filepath.Join(home, ".cache"))
 	t.Setenv("HOMEBREW_PREFIX", "")
-	t.Setenv("CLOTHER_BIN", binDir)
-	t.Setenv("CLOTHER_SKIP_SELF_UPDATE", "1")
+	t.Setenv("ZAIBFLOW_BIN", binDir)
+	t.Setenv("ZAIBFLOW_SKIP_SELF_UPDATE", "1")
 
 	if err := os.MkdirAll(binDir, 0o755); err != nil {
 		t.Fatal(err)
@@ -91,7 +91,7 @@ func TestRunInstallUpgradesToLatestRelease(t *testing.T) {
 	t.Setenv("XDG_DATA_HOME", filepath.Join(home, ".local", "share"))
 	t.Setenv("XDG_CACHE_HOME", filepath.Join(home, ".cache"))
 	t.Setenv("HOMEBREW_PREFIX", "")
-	t.Setenv("CLOTHER_BIN", binDir)
+	t.Setenv("ZAIBFLOW_BIN", binDir)
 
 	if err := os.MkdirAll(binDir, 0o755); err != nil {
 		t.Fatal(err)
@@ -165,8 +165,8 @@ func TestRunInstallWarnsWhenBinDirIsNotOnPath(t *testing.T) {
 	t.Setenv("XDG_DATA_HOME", filepath.Join(home, ".local", "share"))
 	t.Setenv("XDG_CACHE_HOME", filepath.Join(home, ".cache"))
 	t.Setenv("HOMEBREW_PREFIX", "")
-	t.Setenv("CLOTHER_BIN", binDir)
-	t.Setenv("CLOTHER_SKIP_SELF_UPDATE", "1")
+	t.Setenv("ZAIBFLOW_BIN", binDir)
+	t.Setenv("ZAIBFLOW_SKIP_SELF_UPDATE", "1")
 
 	if err := os.MkdirAll(realClaudeDir, 0o755); err != nil {
 		t.Fatal(err)

@@ -5,12 +5,12 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/jolehuit/clother/internal/config"
+	"github.com/Shahzaibzah00r/zaibflow/internal/config"
 )
 
 func TestFindRealClaudeCanUseSameBinDir(t *testing.T) {
 	root := t.TempDir()
-	binDir := filepath.Join(root, "clother-bin")
+	binDir := filepath.Join(root, "zaibflow-bin")
 	realDir := filepath.Join(root, "real-bin")
 	if err := os.MkdirAll(binDir, 0o755); err != nil {
 		t.Fatal(err)

@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/jolehuit/clother/internal/providers"
+	"github.com/Shahzaibzah00r/zaibflow/internal/providers"
 )
 
 type ProviderOverride struct {
@@ -93,7 +93,7 @@ func (cfg *File) ApplyLegacySecrets(secrets Secrets, catalog providers.Catalog) 
 		}
 		baseURL := secrets["ZAIBFLOW_"+key+"_BASE_URL"]
 		if baseURL == "" {
-			baseURL = secrets["CLOTHER_"+key+"_BASE_URL"]
+			baseURL = secrets["ZAIBFLOW_"+key+"_BASE_URL"]
 		}
 		if baseURL == "" {
 			continue
@@ -171,8 +171,8 @@ func normalizeOpenRouterAliasName(name string) string {
 	for strings.HasPrefix(name, "zf-or-") {
 		name = strings.TrimPrefix(name, "zf-or-")
 	}
-	for strings.HasPrefix(name, "clother-or-") {
-		name = strings.TrimPrefix(name, "clother-or-")
+	for strings.HasPrefix(name, "zaibflow-or-") {
+		name = strings.TrimPrefix(name, "zaibflow-or-")
 	}
 	name = strings.Trim(name, "-")
 	return name
@@ -180,7 +180,7 @@ func normalizeOpenRouterAliasName(name string) string {
 
 func looksLikeLauncherName(value string) bool {
 	value = strings.TrimSpace(strings.ToLower(value))
-	return strings.HasPrefix(value, "zf-") || strings.HasPrefix(value, "clother-")
+	return strings.HasPrefix(value, "zf-") || strings.HasPrefix(value, "zaibflow-")
 }
 
 func (cfg *File) OpenRouterNames() []string {

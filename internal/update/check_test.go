@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jolehuit/clother/internal/config"
+	"github.com/Shahzaibzah00r/zaibflow/internal/config"
 )
 
 func TestIsNewer(t *testing.T) {

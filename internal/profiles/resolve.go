@@ -6,8 +6,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/jolehuit/clother/internal/config"
-	"github.com/jolehuit/clother/internal/providers"
+	"github.com/Shahzaibzah00r/zaibflow/internal/config"
+	"github.com/Shahzaibzah00r/zaibflow/internal/providers"
 )
 
 type Target struct {
@@ -36,8 +36,8 @@ func Invocation(argv0 string) (string, bool) {
 	if strings.HasPrefix(base, "zf-") {
 		return strings.TrimPrefix(base, "zf-"), true
 	}
-	if strings.HasPrefix(base, "clother-") {
-		legacy := strings.TrimPrefix(base, "clother-")
+	if strings.HasPrefix(base, "zaibflow-") {
+		legacy := strings.TrimPrefix(base, "zaibflow-")
 		if legacy == "ollama" {
 			return "ollama", true
 		}

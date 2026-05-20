@@ -5,11 +5,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/jolehuit/clother/internal/config"
-	"github.com/jolehuit/clother/internal/launchers"
-	"github.com/jolehuit/clother/internal/runtime"
-	"github.com/jolehuit/clother/internal/update"
-	"github.com/jolehuit/clother/internal/version"
+	"github.com/Shahzaibzah00r/zaibflow/internal/config"
+	"github.com/Shahzaibzah00r/zaibflow/internal/launchers"
+	"github.com/Shahzaibzah00r/zaibflow/internal/runtime"
+	"github.com/Shahzaibzah00r/zaibflow/internal/update"
+	"github.com/Shahzaibzah00r/zaibflow/internal/version"
 )
 
 var downloadLatestBinary = update.DownloadLatestIfNewer
@@ -62,7 +62,7 @@ func runInstall(ctx context.Context, c Context) (int, error) {
 		return 1, err
 	}
 	for _, legacy := range []string{
-		filepath.Join(c.Paths.DataDir, "clother-full.sh"),
+		filepath.Join(c.Paths.DataDir, "zaibflow-full.sh"),
 		filepath.Join(c.Paths.DataDir, "banner"),
 	} {
 		_ = os.Remove(legacy)

@@ -1,333 +1,122 @@
 <div align="center">
-  <img src="docs/logo.png" alt="Clother logo" width="220" />
-  <h1>Clother</h1>
-  <p><strong>One CLI to switch between Claude Code providers instantly.</strong></p>
+  <img src="docs/logo.png" alt="ZaibFlow logo" width="220" />
+  <h1>ZaibFlow</h1>
+  <p><strong>A cross-platform CLI to manage and invoke model providers (Claude/OpenRouter/OLLAMA/custom).</strong></p>
   <p>
     <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License" /></a>
     <a href="https://go.dev/"><img src="https://img.shields.io/badge/Language-Go-00ADD8.svg" alt="Go" /></a>
-    <a href="#platform-support"><img src="https://img.shields.io/badge/Platform-macOS%20%7C%20Linux-lightgrey.svg" alt="Platform macOS and Linux" /></a>
-    <a href="https://github.com/jolehuit/clother/stargazers"><img src="https://img.shields.io/github/stars/jolehuit/clother?style=social" alt="GitHub stars" /></a>
+    <a href="#platform-support"><img src="https://img.shields.io/badge/Platform-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey.svg" alt="Platform support" /></a>
   </p>
 </div>
 
-<br/>
+## Quick Install
 
-<div align="center">
-  <img src="docs/demo-fast.gif" alt="Clother terminal demo" width="900" />
-</div>
+Choose one of the following installation methods based on your platform and preferences.
 
-## Why Clother?
-
-Switching Claude Code providers usually means changing env vars, endpoints, models, and launcher scripts by hand.
-Clother gives you one install and one command pattern across Claude, Z.AI, Kimi, Alibaba, OpenRouter, local backends, China endpoints, and many other Anthropic-compatible providers.
-
-## Table of Contents
-
-- [Installation](#installation)
-- [Core Usage](#core-usage)
-- [Provider Reference](#provider-reference)
-- [Troubleshooting](#troubleshooting)
-- [VS Code Integration](#vs-code-integration)
-- [Platform Support](#platform-support)
-- [Under the Hood](#under-the-hood)
-- [Contributors](#contributors)
-- [Star History](#star-history)
-- [License](#license)
-
-## Installation
-
-### Homebrew (macOS recommended)
+- Install via the official bootstrap script (recommended):
 
 ```bash
-# 1. Install Claude Code CLI
-curl -fsSL https://claude.ai/install.sh | bash
-
-# 2. Install Clother via tap
-brew tap jolehuit/tap
-brew install clother
-
-# 3. Start using it — all launchers are ready immediately
-clother-native                          # Use your Claude Pro/Max/Team subscription
-clother-zai                             # Z.AI (GLM-5)
-clother-zai --yolo                      # Skip permission prompts
-clother-kimi                            # Kimi (kimi-k2.5)
-clother config                          # Configure providers
+curl -fsSL https://raw.githubusercontent.com/Shahzaibzah00r/zaibflow/main/zaibflow.sh | bash
 ```
 
-All `clother-*` provider launchers are installed directly into `$(brew --prefix)/bin` by the formula — no extra setup needed. `brew upgrade clother` keeps everything up to date.
+- Windows (PowerShell installer):
 
-**Update:**
+```powershell
+iwr https://raw.githubusercontent.com/Shahzaibzah00r/zaibflow/main/scripts/install.ps1 | iex
+```
+
+- Install with `go` (build from source):
 
 ```bash
-clother update          # routes to brew upgrade under Homebrew
-# or equivalently:
-brew upgrade clother
+go install github.com/Shahzaibzah00r/zaibflow@latest
 ```
 
-### curl (macOS / Linux)
+- Run directly with `npx` (uses packaged wrapper):
 
 ```bash
-# 1. Install Claude Code CLI
-curl -fsSL https://claude.ai/install.sh | bash
-
-# 2. Install Clother
-curl -fsSL https://raw.githubusercontent.com/jolehuit/clother/main/scripts/install.sh | bash
-
-# 3. Start using it
-clother-native                          # Use your Claude Pro/Max/Team subscription
-clother-zai                             # Z.AI (GLM-5)
-clother-zai --yolo                      # Skip permission prompts
-clother-kimi                            # Kimi (kimi-k2.5)
-clother-ollama --model qwen3-coder      # Local with Ollama
-clother config                          # Configure providers
+npx zaibflow
 ```
 
-**Update:**
+- Manual download for Windows: grab the latest `zaibflow_windows_amd64.zip` from the GitHub Releases page, extract and place `zaibflow.exe` on your PATH.
+
+## Platform-specific notes
+
+- macOS
+  - Recommended: run the bootstrap script above. If you use Homebrew and a tap is available you can `brew install zaibflow` (tap not provided here by default).
+  - After installation, ensure `~/.local/bin` or the installed `bin` directory is on your `PATH`.
+
+- Linux
+  - Use the bootstrap script, or install via `go install` if you have Go toolchain available.
+  - Place the `zaibflow` binary in a directory on your `$PATH` (for single-user installs, `~/.local/bin` is a common choice).
+
+- Windows
+  - Use the PowerShell installer above to download the packaged `.zip` and create the shim.
+  - Alternatively, download the binary release, extract `zaibflow.exe`, and add its folder to your `%PATH%`.
+  - The repository includes `scripts/install.ps1` for unattended installs.
+
+## Building from source
+
+Prerequisites: Go 1.20+ installed.
 
 ```bash
-clother update          # downloads and installs latest release
+git clone https://github.com/Shahzaibzah00r/zaibflow.git
+cd zaibflow
+go build ./cmd/zaibflow
+# or
+go install github.com/Shahzaibzah00r/zaibflow/cmd/zaibflow@latest
 ```
 
-This installs:
+## Usage examples
 
-- `clother`
-- `clother-*` provider launchers
-- resume compatibility for `claude --resume ...`
-
-### Install Options
-
-By default, Clother installs launchers to:
-
-- the same directory as your existing `claude` binary, when `claude` is already on `PATH`
-- otherwise **macOS**: `~/bin`
-- otherwise **Linux**: `~/.local/bin` (XDG standard)
-
-If the chosen bin directory is not on `PATH`, `clother install` prints a warning with the exact directory to add.
-
-You can override this with `--bin-dir` or the `CLOTHER_BIN` environment variable:
+Basic commands:
 
 ```bash
-# Using --bin-dir flag
-curl -fsSL https://raw.githubusercontent.com/jolehuit/clother/main/scripts/install.sh | bash -s -- --bin-dir ~/.local/bin
-
-# Using environment variable
-export CLOTHER_BIN="$HOME/.local/bin"
-curl -fsSL https://raw.githubusercontent.com/jolehuit/clother/main/scripts/install.sh | bash
+zaibflow init            # create config & setup default files
+zaibflow config edit     # edit configuration
+zaibflow run <provider> [args...]   # run a provider-based launcher
+zaibflow install         # install launchers and helpers
+zaibflow update          # check for updates and install
 ```
 
-Clother keeps `claude --resume ...` working with Clother features after install.
-
-## Core Usage
-
-### Commands
-
-| Command | Description |
-|---------|-------------|
-| `clother config [provider]` | Configure provider |
-| `clother list` | List profiles |
-| `clother info <provider>` | Show provider details |
-| `clother test` | Test connectivity |
-| `clother status` | Installation status |
-| `clother install` | Install/update Clother (create/refresh symlinks) |
-| `clother update` | Update to latest version |
-| `clother uninstall` | Remove everything |
-
-### Update
+Examples:
 
 ```bash
-clother update
+zaibflow run ollama --model qwen3-coder
+zaibflow run openrouter my-alias
+zaibflow run local-provider --help
 ```
 
-Routes to `brew upgrade clother` under Homebrew, or downloads the latest release for curl installs. Also refreshes provider symlinks.
+Launchers
 
-### Changing the Default Model
+ZaibFlow creates small shims/launchers to make invoking providers easy. Typical names:
 
-Each provider launcher comes with a default model (for example `glm-5` for Z.AI). You can override it in two ways:
+- `zf-<provider>` (recommended short form)
+- `zaibflow-<provider>` (legacy compatibility)
 
-```bash
-# One-time: pass --model through to Claude CLI
-clother-zai --model glm-4.7
+These are installed into the configured `bin` directory (see `ZAIBFLOW_BIN`).
 
-# Permanent: configure the provider and pick a different default
-clother config zai
-```
+## Environment variables
 
-Use `clother info <provider>` to inspect the resolved model.
-
-### Resume
-
-Clother keeps the resume command printed by Claude Code working across providers.
-
-After a provider-launched session, Clother also prints a provider-aware reopen
-command such as:
-
-```bash
-clother-kimi --resume <session-id>
-```
-
-When resuming a non-Claude session into native Claude, Clother temporarily
-sanitizes incompatible non-Claude thinking blocks for the duration of that
-single launch, then restores the original session file afterwards.
-
-## Provider Reference
-
-### Cloud
-
-| Command | Provider | Model | API Key |
-|---------|----------|-------|---------|
-| `clother-native` | Anthropic | Claude | Your subscription |
-| `clother-zai` | Z.AI | GLM-5 | [z.ai](https://z.ai) |
-| `clother-minimax` | MiniMax | MiniMax-M2.7 | [minimax.io](https://minimax.io) |
-| `clother-kimi` | Kimi | kimi-k2.5 | [kimi.com](https://kimi.com) |
-| `clother-moonshot` | Moonshot AI | kimi-k2.5 | [moonshot.ai](https://moonshot.ai) |
-| `clother-deepseek` | DeepSeek | deepseek-chat | [deepseek.com](https://platform.deepseek.com) |
-| `clother-mimo` | Xiaomi MiMo | mimo-v2-pro | [xiaomimimo.com](https://platform.xiaomimimo.com) |
-| `clother-alibaba` | Alibaba Coding Plan | qwen3.5-plus | [modelstudio](https://modelstudio.console.alibabacloud.com) |
-| `clother-alibaba-us` | Alibaba Coding Plan (US) | qwen3.5-plus | [modelstudio](https://modelstudio.console.alibabacloud.com) |
-
-### OpenRouter (100+ Models)
-
-OpenRouter launchers follow the `clother-or-<alias>` naming pattern.
-For example, if you alias `moonshotai/kimi-k2.5` to `kimi-k25`, the launcher becomes `clother-or-kimi-k25`.
-
-```bash
-clother config openrouter               # Set API key + add models
-# Example: alias moonshotai/kimi-k2.5 as kimi-k25
-clother-or-kimi-k25                     # Use it
-```
-
-> **Tip**: Find model IDs on [openrouter.ai/models](https://openrouter.ai/models) — click the copy icon next to any model name.
-
-> If a model doesn't work as expected, try the `:exacto` variant (e.g. `moonshotai/kimi-k2-0905:exacto`) which provides better tool calling support.
-
-### China Endpoints
-
-| Command | Provider | Endpoint |
-|---------|----------|----------|
-| `clother-zai-cn` | Z.AI China | open.bigmodel.cn |
-| `clother-minimax-cn` | MiniMax China | api.minimaxi.com |
-| `clother-ve` | Volcengine | ark.cn-beijing.volces.com |
-| `clother-alibaba-cn` | Alibaba China | coding.dashscope.aliyuncs.com |
-
-### Local (No API Key)
-
-| Command | Provider | Port | Setup |
-|---------|----------|------|-------|
-| `clother-ollama` | Ollama | 11434 | [ollama.com](https://ollama.com) |
-| `clother-lmstudio` | LM Studio | 1234 | [lmstudio.ai](https://lmstudio.ai) |
-| `clother-llamacpp` | llama.cpp | 8000 | [github.com/ggml-org/llama.cpp](https://github.com/ggml-org/llama.cpp) |
-
-```bash
-# Ollama
-ollama pull qwen3-coder && ollama serve
-clother-ollama --model qwen3-coder
-
-# LM Studio
-clother-lmstudio --model <model>
-
-# llama.cpp
-./llama-server --model model.gguf --port 8000 --jinja
-clother-llamacpp --model <model>
-```
-
-### Custom
-
-```bash
-clother config custom
-clother-myprovider                      # Ready
-```
-
-### Alibaba Coding Plan Models
-
-All Alibaba variants (`alibaba`, `alibaba-us`, `alibaba-cn`) share the same API key and support these models:
-
-| Model |
-|-------|
-| `qwen3.5-plus` (default) |
-| `kimi-k2.5` |
-| `glm-5` |
-| `MiniMax-M2.5` |
-| `qwen3-coder-next` |
-| `qwen3-coder-plus` |
-| `qwen3-max-2026-01-23` |
-| `glm-4.7` |
-
-Switch models with `--model`:
-
-```bash
-clother-alibaba --model kimi-k2.5
-clother-alibaba --model glm-5
-clother-alibaba-cn --model qwen3-coder-next
-```
+- `ZAIBFLOW_BIN` — custom bin directory where launchers are written.
+- `ZAIBFLOW_CONFIG_DIR` — config directory (defaults to XDG config path + `/zaibflow`).
+- `ZAIBFLOW_DATA_DIR` — data directory (defaults to XDG data path + `/zaibflow`).
+- `ZAIBFLOW_CACHE_DIR` — cache directory.
+- `ZAIBFLOW_SKIP_SELF_UPDATE=1` — disable automatic self-update during `install`.
+- `ZAIBFLOW_RELEASE_BASE_URL` — override release base URL to an alternate host.
 
 ## Troubleshooting
 
-| Problem | Solution |
-|---------|----------|
-| `claude: command not found` | Install Claude CLI first |
-| `clother: command not found` | Run `clother status` to see the installed bin dir, then add that directory to `PATH` and restart your shell |
-| `claude --resume ...` does not behave like Clother | Restart your shell, then run `clother install` again |
-| `--yolo` is not recognized | Restart your shell, then run `clother install` again |
-| `API key not set` | Run `clother config` |
+- If `zaibflow` is not found after install, ensure the install `bin` directory is on your `PATH`.
+- If provider launchers are missing, run `zaibflow install` to re-generate shims.
 
-## VS Code Integration
+## Contributing
 
-Clother works with the official **Claude Code** extension.
-Use Claude Code extension `2.6+`.
+Contributions welcome: open issues and PRs against the GitHub repository.
 
-To configure it:
+## Contact
 
-1. Open VS Code Settings (`Cmd+,` or `Ctrl+,`).
-2. Search for **"Claude Process Wrapper"** (`claudeProcessWrapper`).
-3. Set it to the **full path** of your chosen launcher:
-   - macOS: `/Users/yourname/bin/clother-zai`
-   - Linux: `/home/yourname/.local/bin/clother-zai`
-4. Reload VS Code.
-
-> **Note**: Requires Clother v2.6+ (which handles non-interactive shell output correctly).
-
-## Platform Support
-
-macOS (zsh/bash) • Linux (zsh/bash) • Windows (WSL)
-At runtime, the binary resolves the selected profile from its own invocation
-name, loads config and secrets, sets the required Anthropic-compatible
-environment variables, then launches the real Claude binary outside the Clother
-bin directory.
-
-Example for `clother-zai`:
-
-```bash
-export ANTHROPIC_BASE_URL="https://api.z.ai/api/anthropic"
-export ANTHROPIC_AUTH_TOKEN="$ZAI_API_KEY"
-exec /path/to/the/real/claude "$@"
-```
-
-API keys stored in `~/.local/share/clother/secrets.env` (chmod 600).
-
-`--yolo` is accepted by Clother launchers and by the Clother `claude` shim as
-shorthand for `--dangerously-skip-permissions`.
-
-### Local Release Testing
-
-Test the binary installer locally against a local directory or server:
-
-```bash
-CLOTHER_RELEASE_BASE_URL=http://127.0.0.1:8000 \
-  ./scripts/install.sh install
-```
-
-## Contributors
-
-- [@darkokoa](https://github.com/darkokoa) — China endpoints
-- [@RawToast](https://github.com/RawToast) — Kimi endpoint fix
-- [@sammcj](https://github.com/sammcj) — Security hardening
-- [@aprakasa](https://github.com/aprakasa) — Linux compatibility fixes in `load_secrets()`
-- [@luciano-fiandesio](https://github.com/luciano-fiandesio) — Install directory improvement (issue)
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=jolehuit/clother&type=Date)](https://www.star-history.com/#jolehuit/clother&Date)
+Maintained by Shahzaib — contact: <shahzaibzahoor7@gmail.com>
 
 ## License
 
-MIT © [jolehuit](https://github.com/jolehuit)
+MIT

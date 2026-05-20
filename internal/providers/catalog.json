@@ -451,9 +451,7 @@
         "Pull a model: ollama pull qwen3-coder",
         "Start serving: ollama serve"
       ],
-      "usage": [
-        "clother-ollama --model qwen3-coder"
-      ]
+      "usage": ["zaibflow-ollama --model qwen3-coder"]
     },
     {
       "id": "lmstudio",
@@ -473,9 +471,7 @@
         "Load a model in the app",
         "Start the server on port 1234"
       ],
-      "usage": [
-        "clother-lmstudio --model <model-name>"
-      ]
+      "usage": ["zaibflow-lmstudio --model <model-name>"]
     },
     {
       "id": "llamacpp",
@@ -493,9 +489,7 @@
         "Build llama.cpp: https://github.com/ggml-org/llama.cpp",
         "Start the server: ./llama-server --model <model.gguf> --port 8000 --jinja"
       ],
-      "usage": [
-        "clother-llamacpp --model <model-name>"
-      ]
+      "usage": ["zaibflow-llamacpp --model <model-name>"]
     }
   ]
 }

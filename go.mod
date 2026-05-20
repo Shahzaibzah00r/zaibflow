@@ -1,3 +1,3 @@
-module github.com/jolehuit/clother
+module github.com/Shahzaibzah00r/zaibflow
 
 go 1.23.0

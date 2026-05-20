@@ -5,8 +5,8 @@ import (
 	"io"
 	"sort"
 
-	"github.com/jolehuit/clother/internal/providers"
-	"github.com/jolehuit/clother/internal/version"
+	"github.com/Shahzaibzah00r/zaibflow/internal/providers"
+	"github.com/Shahzaibzah00r/zaibflow/internal/version"
 )
 
 func ShowBrief(w io.Writer) {

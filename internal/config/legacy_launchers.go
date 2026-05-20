@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/jolehuit/clother/internal/providers"
+	"github.com/Shahzaibzah00r/zaibflow/internal/providers"
 )
 
 var exportPattern = regexp.MustCompile(`^export ([A-Z0-9_]+)="?(.*?)"?$`)
@@ -24,7 +24,7 @@ func MigrateLegacyLaunchers(binDir string, catalog providers.Catalog, cfg *File)
 
 	for _, entry := range entries {
 		name := entry.Name()
-		if !strings.HasPrefix(name, "clother-") || name == "clother" {
+		if !strings.HasPrefix(name, "zaibflow-") || name == "zaibflow" {
 			continue
 		}
 		path := filepath.Join(binDir, name)
@@ -32,7 +32,7 @@ func MigrateLegacyLaunchers(binDir string, catalog providers.Catalog, cfg *File)
 		if err != nil {
 			continue
 		}
-		profile := strings.TrimPrefix(name, "clother-")
+		profile := strings.TrimPrefix(name, "zaibflow-")
 		envs := map[string]string{}
 		for _, line := range lines {
 			match := exportPattern.FindStringSubmatch(strings.TrimSpace(line))

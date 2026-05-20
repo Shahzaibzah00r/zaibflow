@@ -3,7 +3,7 @@ package config
 import (
 	"testing"
 
-	"github.com/jolehuit/clother/internal/providers"
+	"github.com/Shahzaibzah00r/zaibflow/internal/providers"
 )
 
 func TestNormalizeRepairsLegacyProviderOverridesAndOpenRouterAliases(t *testing.T) {
@@ -20,7 +20,7 @@ func TestNormalizeRepairsLegacyProviderOverridesAndOpenRouterAliases(t *testing.
 			"zai": {Model: "1"},
 		},
 		OpenRouterAliases: map[string]string{
-			"clother-or-kimi-k25": "clother-or-kimi-k25",
+			"zaibflow-or-kimi-k25": "zaibflow-or-kimi-k25",
 			"kimi-k25":            "moonshotai/kimi-k2.5",
 		},
 		CustomProviders: map[string]CustomProvider{},
@@ -55,7 +55,7 @@ func TestApplyLegacySecretsIgnoresLauncherShapedOpenRouterValues(t *testing.T) {
 	}
 
 	cfg.ApplyLegacySecrets(Secrets{
-		"OPENROUTER_MODEL_CLOTHER_OR_KIMI_K25": "clother-or-kimi-k25",
+		"OPENROUTER_MODEL_ZAIBFLOW_OR_KIMI_K25": "zaibflow-or-kimi-k25",
 		"OPENROUTER_MODEL_KIMI_K25":            "moonshotai/kimi-k2.5",
 	}, catalog)
 

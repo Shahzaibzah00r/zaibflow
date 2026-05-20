@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/jolehuit/clother/internal/profiles"
-	"github.com/jolehuit/clother/internal/version"
+	"github.com/Shahzaibzah00r/zaibflow/internal/profiles"
+	"github.com/Shahzaibzah00r/zaibflow/internal/version"
 )
 
 func runStatus(_ context.Context, c Context) (int, error) {

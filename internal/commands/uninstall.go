@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/jolehuit/clother/internal/launchers"
+	"github.com/Shahzaibzah00r/zaibflow/internal/launchers"
 )
 
 func runUninstall(_ context.Context, c Context) (int, error) {

@@ -3,7 +3,7 @@ package config
 import (
 	"testing"
 
-	"github.com/jolehuit/clother/internal/providers"
+	"github.com/Shahzaibzah00r/zaibflow/internal/providers"
 )
 
 func TestNormalizeLegacySecretsDropsInvalidLegacyEntries(t *testing.T) {
@@ -15,7 +15,7 @@ func TestNormalizeLegacySecretsDropsInvalidLegacyEntries(t *testing.T) {
 	}
 
 	secrets := Secrets{
-		"OPENROUTER_MODEL_CLOTHER_OR_KIMI_K25": "clother-or-kimi-k25",
+		"OPENROUTER_MODEL_ZAIBFLOW_OR_KIMI_K25": "zaibflow-or-kimi-k25",
 		"OPENROUTER_MODEL_KIMI_K25":            "moonshotai/kimi-k2.5",
 		"ZAIBFLOW_ALIBABA_API_KEY_BASE_URL":    "https://example.com/unused",
 		"ALIBABA_API_KEY":                      "secret",
@@ -23,7 +23,7 @@ func TestNormalizeLegacySecretsDropsInvalidLegacyEntries(t *testing.T) {
 
 	NormalizeLegacySecrets(secrets, catalog)
 
-	if _, ok := secrets["OPENROUTER_MODEL_CLOTHER_OR_KIMI_K25"]; ok {
+	if _, ok := secrets["OPENROUTER_MODEL_ZAIBFLOW_OR_KIMI_K25"]; ok {
 		t.Fatalf("expected invalid OpenRouter launcher-shaped entry to be removed: %+v", secrets)
 	}
 	if _, ok := secrets["ZAIBFLOW_ALIBABA_API_KEY_BASE_URL"]; ok {

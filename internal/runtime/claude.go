@@ -10,10 +10,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jolehuit/clother/internal/config"
-	"github.com/jolehuit/clother/internal/session"
-	"github.com/jolehuit/clother/internal/update"
-	"github.com/jolehuit/clother/internal/version"
+	"github.com/Shahzaibzah00r/zaibflow/internal/config"
+	"github.com/Shahzaibzah00r/zaibflow/internal/session"
+	"github.com/Shahzaibzah00r/zaibflow/internal/update"
+	"github.com/Shahzaibzah00r/zaibflow/internal/version"
 )
 
 func RunClaudeShim(ctx context.Context, paths config.Paths, args []string) (int, error) {

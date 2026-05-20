@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jolehuit/clother/internal/config"
+	"github.com/Shahzaibzah00r/zaibflow/internal/config"
 )
 
 type Patch struct {

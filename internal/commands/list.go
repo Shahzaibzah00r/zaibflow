@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jolehuit/clother/internal/config"
-	"github.com/jolehuit/clother/internal/launchers"
-	"github.com/jolehuit/clother/internal/profiles"
-	"github.com/jolehuit/clother/internal/providers"
+	"github.com/Shahzaibzah00r/zaibflow/internal/config"
+	"github.com/Shahzaibzah00r/zaibflow/internal/launchers"
+	"github.com/Shahzaibzah00r/zaibflow/internal/profiles"
+	"github.com/Shahzaibzah00r/zaibflow/internal/providers"
 )
 
 func runList(_ context.Context, c Context) (int, error) {

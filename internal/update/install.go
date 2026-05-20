@@ -19,9 +19,6 @@ import (
 const defaultReleaseBaseURL = "https://github.com/Shahzaibzah00r/zaibflow/releases/download"
 
 func DownloadLatestIfNewer(ctx context.Context, current string) (string, string, func(), error) {
-	if os.Getenv("CLOTHER_SKIP_SELF_UPDATE") == "1" {
-		return "", "", nil, nil
-	}
 	if os.Getenv("ZAIBFLOW_SKIP_SELF_UPDATE") == "1" {
 		return "", "", nil, nil
 	}
@@ -43,7 +40,7 @@ func DownloadLatestIfNewer(ctx context.Context, current string) (string, string,
 }
 
 func downloadReleaseBinary(ctx context.Context, version string) (string, func(), error) {
-	tmpDir, err := os.MkdirTemp("", "clother-update-*")
+	tmpDir, err := os.MkdirTemp("", "zaibflow-update-*")
 	if err != nil {
 		return "", nil, err
 	}
@@ -106,7 +103,7 @@ func releaseAssetName() (string, error) {
 }
 
 func releaseAssetURL(version, asset string) string {
-	if base := strings.TrimRight(strings.TrimSpace(firstNonEmpty(os.Getenv("ZAIBFLOW_RELEASE_BASE_URL"), os.Getenv("CLOTHER_RELEASE_BASE_URL"))), "/"); base != "" {
+	if base := strings.TrimRight(strings.TrimSpace(firstNonEmpty(os.Getenv("ZAIBFLOW_RELEASE_BASE_URL"))), "/"); base != "" {
 		return base + "/" + asset
 	}
 	return strings.TrimRight(defaultReleaseBaseURL, "/") + "/" + displayVersion(version) + "/" + asset

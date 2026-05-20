@@ -8,15 +8,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jolehuit/clother/internal/cli"
-	"github.com/jolehuit/clother/internal/commands"
-	"github.com/jolehuit/clother/internal/config"
-	"github.com/jolehuit/clother/internal/profiles"
-	"github.com/jolehuit/clother/internal/providers"
-	"github.com/jolehuit/clother/internal/runtime"
-	"github.com/jolehuit/clother/internal/ui"
-	"github.com/jolehuit/clother/internal/update"
-	"github.com/jolehuit/clother/internal/version"
+	"github.com/Shahzaibzah00r/zaibflow/internal/cli"
+	"github.com/Shahzaibzah00r/zaibflow/internal/commands"
+	"github.com/Shahzaibzah00r/zaibflow/internal/config"
+	"github.com/Shahzaibzah00r/zaibflow/internal/profiles"
+	"github.com/Shahzaibzah00r/zaibflow/internal/providers"
+	"github.com/Shahzaibzah00r/zaibflow/internal/runtime"
+	"github.com/Shahzaibzah00r/zaibflow/internal/ui"
+	"github.com/Shahzaibzah00r/zaibflow/internal/update"
+	"github.com/Shahzaibzah00r/zaibflow/internal/version"
 )
 
 type App struct {

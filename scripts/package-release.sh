@@ -19,9 +19,9 @@ build_tar_target() {
   mkdir -p "$work"
   GOOS="$os" GOARCH="$arch" CGO_ENABLED=0 go build \
     -trimpath \
-    -ldflags="-s -w -X github.com/jolehuit/clother/internal/version.Value=${VERSION}" \
+    -ldflags="-s -w -X github.com/Shahzaibzah00r/zaibflow/internal/version.Value=${VERSION}" \
     -o "$work/zaibflow" \
-    ./cmd/clother
+    ./cmd/zaibflow
   tar -C "$work" -czf "$DIST_DIR/$asset" zaibflow
 }
 
@@ -35,9 +35,9 @@ build_zip_target() {
   mkdir -p "$work"
   GOOS="$os" GOARCH="$arch" CGO_ENABLED=0 go build \
     -trimpath \
-    -ldflags="-s -w -X github.com/jolehuit/clother/internal/version.Value=${VERSION}" \
+    -ldflags="-s -w -X github.com/Shahzaibzah00r/zaibflow/internal/version.Value=${VERSION}" \
     -o "$work/zaibflow.exe" \
-    ./cmd/clother
+    ./cmd/zaibflow
   (cd "$work" && ARCHIVE_PATH="$DIST_DIR/$asset" python3 - <<'PY'
 import os
 import pathlib

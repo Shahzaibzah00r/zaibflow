@@ -1,10 +1,10 @@
 package commands
 
 import (
-	"github.com/jolehuit/clother/internal/cli"
-	"github.com/jolehuit/clother/internal/config"
-	"github.com/jolehuit/clother/internal/providers"
-	"github.com/jolehuit/clother/internal/ui"
+	"github.com/Shahzaibzah00r/zaibflow/internal/cli"
+	"github.com/Shahzaibzah00r/zaibflow/internal/config"
+	"github.com/Shahzaibzah00r/zaibflow/internal/providers"
+	"github.com/Shahzaibzah00r/zaibflow/internal/ui"
 )
 
 type Context struct {

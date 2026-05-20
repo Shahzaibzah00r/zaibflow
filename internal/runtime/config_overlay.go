@@ -8,8 +8,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/jolehuit/clother/internal/profiles"
-	"github.com/jolehuit/clother/internal/providers"
+	"github.com/Shahzaibzah00r/zaibflow/internal/profiles"
+	"github.com/Shahzaibzah00r/zaibflow/internal/providers"
 )
 
 func PrepareClaudeConfigOverlay(target profiles.Target, args []string, env []string) ([]string, func(), error) {
@@ -47,7 +47,7 @@ func PrepareClaudeConfigOverlay(target profiles.Target, args []string, env []str
 		sourceDir = filepath.Join(userHomeDir(), ".claude")
 	}
 
-	overlayDir, err := os.MkdirTemp("", "clother-claude-config-*")
+	overlayDir, err := os.MkdirTemp("", "zaibflow-claude-config-*")
 	if err != nil {
 		return nil, nil, err
 	}

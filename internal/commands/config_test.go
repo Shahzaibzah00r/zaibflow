@@ -6,9 +6,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jolehuit/clother/internal/config"
-	"github.com/jolehuit/clother/internal/providers"
-	"github.com/jolehuit/clother/internal/ui"
+	"github.com/Shahzaibzah00r/zaibflow/internal/config"
+	"github.com/Shahzaibzah00r/zaibflow/internal/providers"
+	"github.com/Shahzaibzah00r/zaibflow/internal/ui"
 )
 
 func TestResolveModelChoiceMapsNumericSelections(t *testing.T) {
@@ -46,7 +46,7 @@ func TestConfigBuiltinAllowsModelOverrideWithoutCatalogChoices(t *testing.T) {
 	t.Setenv("XDG_CONFIG_HOME", filepath.Join(root, ".config"))
 	t.Setenv("XDG_DATA_HOME", filepath.Join(root, ".local", "share"))
 	t.Setenv("XDG_CACHE_HOME", filepath.Join(root, ".cache"))
-	t.Setenv("CLOTHER_BIN", filepath.Join(root, "bin"))
+	t.Setenv("ZAIBFLOW_BIN", filepath.Join(root, "bin"))
 
 	paths, err := config.Detect("")
 	if err != nil {

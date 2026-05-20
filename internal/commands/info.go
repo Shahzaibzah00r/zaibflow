@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/jolehuit/clother/internal/profiles"
+	"github.com/Shahzaibzah00r/zaibflow/internal/profiles"
 )
 
 func runInfo(_ context.Context, c Context, args []string) (int, error) {

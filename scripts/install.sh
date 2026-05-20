@@ -6,9 +6,9 @@ if [[ $# -eq 0 ]]; then
 fi
 
 REPO="Shahzaibzah00r/zaibflow"
-VERSION="${ZAIBFLOW_VERSION:-${CLOTHER_VERSION:-latest}}"
-RELEASE_BASE_URL="${ZAIBFLOW_RELEASE_BASE_URL:-${CLOTHER_RELEASE_BASE_URL:-}}"
-INSTALL_MODE="${ZAIBFLOW_INSTALL_MODE:-${CLOTHER_INSTALL_MODE:-auto}}"
+VERSION="${ZAIBFLOW_VERSION:-latest}"
+RELEASE_BASE_URL="${ZAIBFLOW_RELEASE_BASE_URL:-}"
+INSTALL_MODE="${ZAIBFLOW_INSTALL_MODE:-auto}"
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
@@ -20,7 +20,7 @@ run_from_source() {
     exit 1
   }
   cd "$source_dir"
-  exec go run ./cmd/clother "$@"
+  exec go run ./cmd/zaibflow "$@"
 }
 
 detect_os() {
@@ -68,7 +68,7 @@ verify_checksum() {
 
 if [[ "$INSTALL_MODE" != "release" && -n "${BASH_SOURCE[0]:-}" && -f "${BASH_SOURCE[0]}" ]]; then
   SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-  if [[ -f "$SOURCE_DIR/go.mod" && -d "$SOURCE_DIR/cmd/clother" ]]; then
+  if [[ -f "$SOURCE_DIR/go.mod" && -d "$SOURCE_DIR/cmd/zaibflow" ]]; then
     run_from_source "$SOURCE_DIR" "$@"
   fi
 fi

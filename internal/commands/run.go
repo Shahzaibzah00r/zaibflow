@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jolehuit/clother/internal/profiles"
+	"github.com/Shahzaibzah00r/zaibflow/internal/profiles"
 )
 
 func runRun(ctx context.Context, c Context, args []string) (int, error) {

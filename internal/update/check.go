@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jolehuit/clother/internal/config"
+	"github.com/Shahzaibzah00r/zaibflow/internal/config"
 )
 
 const (
@@ -41,7 +41,7 @@ func MaybeMessage(paths config.Paths, current string, now time.Time) (string, er
 }
 
 func maybeMessage(paths config.Paths, current string, now time.Time, fetch fetchFunc) (string, error) {
-	if os.Getenv("ZAIBFLOW_NO_UPDATE_CHECK") == "1" || os.Getenv("CLOTHER_NO_UPDATE_CHECK") == "1" {
+	if os.Getenv("ZAIBFLOW_NO_UPDATE_CHECK") == "1" {
 		return "", nil
 	}
 	if normalizeVersion(current) == "" || strings.EqualFold(strings.TrimSpace(current), "dev") {
@@ -102,7 +102,7 @@ func maybeMessage(paths config.Paths, current string, now time.Time, fetch fetch
 }
 
 func metadataURL() string {
-	if override := strings.TrimSpace(firstNonEmpty(os.Getenv("ZAIBFLOW_UPDATE_URL"), os.Getenv("CLOTHER_UPDATE_URL"))); override != "" {
+	if override := strings.TrimSpace(firstNonEmpty(os.Getenv("ZAIBFLOW_UPDATE_URL"))); override != "" {
 		return override
 	}
 	return defaultMetadataURL

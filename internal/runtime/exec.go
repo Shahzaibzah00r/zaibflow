@@ -11,13 +11,13 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/jolehuit/clother/internal/config"
-	"github.com/jolehuit/clother/internal/launchers"
-	"github.com/jolehuit/clother/internal/profiles"
-	"github.com/jolehuit/clother/internal/session"
-	"github.com/jolehuit/clother/internal/ui"
-	"github.com/jolehuit/clother/internal/update"
-	"github.com/jolehuit/clother/internal/version"
+	"github.com/Shahzaibzah00r/zaibflow/internal/config"
+	"github.com/Shahzaibzah00r/zaibflow/internal/launchers"
+	"github.com/Shahzaibzah00r/zaibflow/internal/profiles"
+	"github.com/Shahzaibzah00r/zaibflow/internal/session"
+	"github.com/Shahzaibzah00r/zaibflow/internal/ui"
+	"github.com/Shahzaibzah00r/zaibflow/internal/update"
+	"github.com/Shahzaibzah00r/zaibflow/internal/version"
 )
 
 type RunOptions struct {

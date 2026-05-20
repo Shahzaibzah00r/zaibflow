@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jolehuit/clother/internal/config"
+	"github.com/Shahzaibzah00r/zaibflow/internal/config"
 )
 
 func TestAnalyzeAndPatchNonClaudeThinking(t *testing.T) {
