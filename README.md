@@ -57,6 +57,7 @@ clother config                          # Configure providers
 All `clother-*` provider launchers are installed directly into `$(brew --prefix)/bin` by the formula — no extra setup needed. `brew upgrade clother` keeps everything up to date.
 
 **Update:**
+
 ```bash
 clother update          # routes to brew upgrade under Homebrew
 # or equivalently:
@@ -82,11 +83,13 @@ clother config                          # Configure providers
 ```
 
 **Update:**
+
 ```bash
 clother update          # downloads and installs latest release
 ```
 
 This installs:
+
 - `clother`
 - `clother-*` provider launchers
 - resume compatibility for `claude --resume ...`
@@ -94,6 +97,7 @@ This installs:
 ### Install Options
 
 By default, Clother installs launchers to:
+
 - the same directory as your existing `claude` binary, when `claude` is already on `PATH`
 - otherwise **macOS**: `~/bin`
 - otherwise **Linux**: `~/.local/bin` (XDG standard)
@@ -285,16 +289,6 @@ To configure it:
 ## Platform Support
 
 macOS (zsh/bash) • Linux (zsh/bash) • Windows (WSL)
-
-## Under the Hood
-
-### How It Works
-
-Clother is a single Go binary. The installer downloads the release artifact,
-installs `clother` into your bin directory, then creates:
-- `clother-*` symlinks for providers
-- a `claude` shim symlink for resume compatibility
-
 At runtime, the binary resolves the selected profile from its own invocation
 name, loads config and secrets, sets the required Anthropic-compatible
 environment variables, then launches the real Claude binary outside the Clother

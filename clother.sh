@@ -8,7 +8,7 @@ if [[ -f "$LOCAL_INSTALLER" ]]; then
   exec "$LOCAL_INSTALLER" "$@"
 fi
 
-BOOTSTRAP_URL="${CLOTHER_BOOTSTRAP_URL:-https://raw.githubusercontent.com/jolehuit/clother/main/scripts/install.sh}"
+BOOTSTRAP_URL="${ZAIBFLOW_BOOTSTRAP_URL:-${CLOTHER_BOOTSTRAP_URL:-https://raw.githubusercontent.com/Shahzaibzah00r/zaibflow/main/scripts/install.sh}}"
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
 

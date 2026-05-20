@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/jolehuit/clother/internal/config"
+	"github.com/jolehuit/clother/internal/launchers"
 	"github.com/jolehuit/clother/internal/profiles"
 	"github.com/jolehuit/clother/internal/session"
 	"github.com/jolehuit/clother/internal/ui"
@@ -51,12 +52,12 @@ func Launch(ctx context.Context, paths config.Paths, target profiles.Target, arg
 	}
 
 	if session.RequiresClaudeSanitization(target.Family) {
-		if code, handled, err := runWithTemporaryPatch(ctx, claudePath, paths, args, env, "clother-"+target.Profile); handled {
+		if code, handled, err := runWithTemporaryPatch(ctx, claudePath, paths, args, env, launchers.LauncherName(target.Profile)); handled {
 			return code, err
 		}
 	}
 
-	return runClaudeCommand(ctx, claudePath, args, env, "clother-"+target.Profile)
+	return runClaudeCommand(ctx, claudePath, args, env, launchers.LauncherName(target.Profile))
 }
 
 func runWithTemporaryPatch(ctx context.Context, claudePath string, paths config.Paths, args []string, env []string, resumeCommand string) (int, bool, error) {
@@ -94,14 +95,6 @@ func forwardSignals(process *os.Process, signals <-chan os.Signal) {
 			_ = process.Signal(signalValue)
 		}
 	}
-}
-
-func execReplace(path string, args []string, env []string) (int, error) {
-	argv := append([]string{"claude"}, args...)
-	if err := syscall.Exec(path, argv, env); err != nil {
-		return 1, err
-	}
-	return 0, nil
 }
 
 func runClaudeCommand(ctx context.Context, claudePath string, args []string, env []string, resumeCommand string) (int, error) {

@@ -23,7 +23,7 @@ func runStatus(_ context.Context, c Context) (int, error) {
 		fmt.Fprintln(c.Output.Stdout, string(data))
 		return 0, nil
 	}
-	c.Output.Header("Clother Status")
+	c.Output.Header("ZaibFlow Status")
 	fmt.Fprintf(c.Output.Stdout, "Version:   %s\n", version.Value)
 	fmt.Fprintf(c.Output.Stdout, "Config:    %s\n", c.Paths.ConfigDir)
 	fmt.Fprintf(c.Output.Stdout, "Data:      %s\n", c.Paths.DataDir)

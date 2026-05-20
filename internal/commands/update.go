@@ -14,7 +14,7 @@ func runUpdate(ctx context.Context, c Context) (int, error) {
 		if err != nil {
 			return 1, err
 		}
-		cmd := exec.CommandContext(ctx, brew, "upgrade", "clother")
+		cmd := exec.CommandContext(ctx, brew, "upgrade", "zaibflow")
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr

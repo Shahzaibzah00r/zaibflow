@@ -20,6 +20,7 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/clother_*.tar.gz
+            dist/zaibflow_*.tar.gz
+            dist/zaibflow_*.zip
             dist/checksums.txt
             dist/latest.json

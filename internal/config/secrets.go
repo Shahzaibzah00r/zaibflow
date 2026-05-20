@@ -90,6 +90,11 @@ func NormalizeLegacySecrets(secrets Secrets, catalog providers.Catalog) {
 			if looksLikeLauncherName(value) || normalizeOpenRouterAliasName(strings.ToLower(strings.ReplaceAll(strings.TrimPrefix(key, "OPENROUTER_MODEL_"), "_", "-"))) == "" {
 				delete(secrets, key)
 			}
+		case strings.HasPrefix(key, "ZAIBFLOW_") && strings.HasSuffix(key, "_BASE_URL"):
+			secretKey := strings.TrimSuffix(strings.TrimPrefix(key, "ZAIBFLOW_"), "_BASE_URL")
+			if _, ok := builtinSecretKeys[secretKey]; ok {
+				delete(secrets, key)
+			}
 		case strings.HasPrefix(key, "CLOTHER_") && strings.HasSuffix(key, "_BASE_URL"):
 			secretKey := strings.TrimSuffix(strings.TrimPrefix(key, "CLOTHER_"), "_BASE_URL")
 			if _, ok := builtinSecretKeys[secretKey]; ok {

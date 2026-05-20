@@ -23,9 +23,9 @@ func runInstall(ctx context.Context, c Context) (int, error) {
 
 	if isHomebrew {
 		// Homebrew manages the binary lifecycle; skip downloading and copying.
-		// os.Executable() returns the stable /opt/homebrew/bin/clother symlink
+		// os.Executable() returns the stable /opt/homebrew/bin/zaibflow symlink
 		// path, so symlinks remain valid after `brew upgrade` without re-running
-		// `clother install`.
+		// `zaibflow install`.
 		execPath, err = os.Executable()
 		if err != nil {
 			return 1, err
@@ -43,7 +43,7 @@ func runInstall(ctx context.Context, c Context) (int, error) {
 
 	realClaude, claudeErr := runtime.FindRealClaude(c.Paths)
 	if claudeErr != nil {
-		c.Output.Warn("claude not found; provider symlinks will be created but the `claude` shim will be skipped — run `clother install` again after installing Claude Code")
+		c.Output.Warn("claude not found; provider symlinks will be created but the `claude` shim will be skipped — run `zaibflow install` again after installing Claude Code")
 	}
 	if err := runtime.PreserveRealClaude(c.Paths, realClaude); err != nil {
 		return 1, err
@@ -67,7 +67,7 @@ func runInstall(ctx context.Context, c Context) (int, error) {
 	} {
 		_ = os.Remove(legacy)
 	}
-	c.Output.Success("installed Clother %s to %s", installedVersion, c.Paths.BinDir)
+	c.Output.Success("installed ZaibFlow %s to %s", installedVersion, c.Paths.BinDir)
 	if !pathContainsDir(os.Getenv("PATH"), c.Paths.BinDir) {
 		c.Output.Warn("%s is not on PATH; add `export PATH=\"%s:$PATH\"` to your shell profile and restart your shell", c.Paths.BinDir, c.Paths.BinDir)
 	}

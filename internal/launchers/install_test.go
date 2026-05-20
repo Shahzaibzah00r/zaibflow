@@ -13,7 +13,7 @@ func TestSyncCreatesBinaryAndLaunchers(t *testing.T) {
 	t.Parallel()
 
 	root := t.TempDir()
-	execPath := filepath.Join(root, "clother-bin")
+	execPath := filepath.Join(root, "zaibflow-bin")
 	if err := os.WriteFile(execPath, []byte("#!/bin/sh\n"), 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -47,18 +47,18 @@ func TestSyncCreatesBinaryAndLaunchers(t *testing.T) {
 	if err := Sync(execPath, paths, catalog, cfg, false); err != nil {
 		t.Fatal(err)
 	}
-	for _, name := range []string{"clother", "claude", "clother-zai", "clother-native", "clother-or-kimi", "clother-myprovider", "clother-or", "clother-custom"} {
+	for _, name := range []string{"zaibflow", "claude", "zf-zai", "zf-native", "zf-local", "zf-or-kimi", "zf-myprovider", "zf-or", "zf-custom"} {
 		if _, err := os.Lstat(filepath.Join(paths.BinDir, name)); err != nil {
 			t.Fatalf("missing %s: %v", name, err)
 		}
 	}
 	// binary must be a regular file (copied), not a symlink
-	info, err := os.Lstat(filepath.Join(paths.BinDir, "clother"))
+	info, err := os.Lstat(filepath.Join(paths.BinDir, "zaibflow"))
 	if err != nil {
 		t.Fatal(err)
 	}
 	if info.Mode()&os.ModeSymlink != 0 {
-		t.Fatal("clother should be a regular file in normal mode, not a symlink")
+		t.Fatal("zaibflow should be a regular file in normal mode, not a symlink")
 	}
 }
 
@@ -67,7 +67,7 @@ func TestSyncHomebrewSkipsCopyAndUsesAbsoluteSymlinks(t *testing.T) {
 
 	root := t.TempDir()
 	// Simulate the Homebrew-managed binary (not in BinDir)
-	homebrewBin := filepath.Join(root, "homebrew", "bin", "clother")
+	homebrewBin := filepath.Join(root, "homebrew", "bin", "zaibflow")
 	if err := os.MkdirAll(filepath.Dir(homebrewBin), 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -98,13 +98,13 @@ func TestSyncHomebrewSkipsCopyAndUsesAbsoluteSymlinks(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// clother binary must NOT be copied into BinDir
-	if _, err := os.Lstat(filepath.Join(paths.BinDir, "clother")); err == nil {
-		t.Fatal("clother binary must not be copied into BinDir in Homebrew mode")
+	// zaibflow binary must NOT be copied into BinDir
+	if _, err := os.Lstat(filepath.Join(paths.BinDir, "zaibflow")); err == nil {
+		t.Fatal("zaibflow binary must not be copied into BinDir in Homebrew mode")
 	}
 
 	// provider symlinks must exist and point to the Homebrew binary
-	for _, name := range []string{"claude", "clother-zai", "clother-native", "clother-or", "clother-custom"} {
+	for _, name := range []string{"claude", "zf-zai", "zf-native", "zf-local", "zf-or", "zf-custom"} {
 		link := filepath.Join(paths.BinDir, name)
 		target, err := os.Readlink(link)
 		if err != nil {
@@ -120,7 +120,7 @@ func TestSyncHomebrewSkipsDynamicProviderSymlinks(t *testing.T) {
 	t.Parallel()
 
 	root := t.TempDir()
-	homebrewBin := filepath.Join(root, "homebrew", "bin", "clother")
+	homebrewBin := filepath.Join(root, "homebrew", "bin", "zaibflow")
 	if err := os.MkdirAll(filepath.Dir(homebrewBin), 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -154,14 +154,14 @@ func TestSyncHomebrewSkipsDynamicProviderSymlinks(t *testing.T) {
 	}
 
 	// individual dynamic symlinks must NOT be created under Homebrew
-	for _, name := range []string{"clother-or-kimi", "clother-myprovider"} {
+	for _, name := range []string{"zf-or-kimi", "zf-myprovider"} {
 		if _, err := os.Lstat(filepath.Join(paths.BinDir, name)); err == nil {
 			t.Fatalf("%s must not be created in Homebrew mode", name)
 		}
 	}
 
 	// gateway symlinks must always be present
-	for _, name := range []string{"clother-or", "clother-custom"} {
+	for _, name := range []string{"zf-or", "zf-custom"} {
 		if _, err := os.Lstat(filepath.Join(paths.BinDir, name)); err != nil {
 			t.Fatalf("gateway symlink %s must always be created: %v", name, err)
 		}

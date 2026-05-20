@@ -1,6 +1,7 @@
 package update
 
 import (
+	"archive/zip"
 	"archive/tar"
 	"compress/gzip"
 	"context"
@@ -15,10 +16,13 @@ import (
 	"strings"
 )
 
-const defaultReleaseBaseURL = "https://github.com/jolehuit/clother/releases/download"
+const defaultReleaseBaseURL = "https://github.com/Shahzaibzah00r/zaibflow/releases/download"
 
 func DownloadLatestIfNewer(ctx context.Context, current string) (string, string, func(), error) {
 	if os.Getenv("CLOTHER_SKIP_SELF_UPDATE") == "1" {
+		return "", "", nil, nil
+	}
+	if os.Getenv("ZAIBFLOW_SKIP_SELF_UPDATE") == "1" {
 		return "", "", nil, nil
 	}
 
@@ -53,7 +57,11 @@ func downloadReleaseBinary(ctx context.Context, version string) (string, func(),
 
 	assetPath := filepath.Join(tmpDir, assetName)
 	checksumsPath := filepath.Join(tmpDir, "checksums.txt")
-	binaryPath := filepath.Join(tmpDir, "clother")
+	binaryName := "zaibflow"
+	if goruntime.GOOS == "windows" {
+		binaryName += ".exe"
+	}
+	binaryPath := filepath.Join(tmpDir, binaryName)
 
 	if err := downloadFile(ctx, releaseAssetURL(version, assetName), assetPath); err != nil {
 		cleanup()
@@ -76,7 +84,7 @@ func downloadReleaseBinary(ctx context.Context, version string) (string, func(),
 
 func releaseAssetName() (string, error) {
 	switch goruntime.GOOS {
-	case "darwin", "linux":
+	case "darwin", "linux", "windows":
 	default:
 		return "", fmt.Errorf("unsupported operating system %q", goruntime.GOOS)
 	}
@@ -91,11 +99,14 @@ func releaseAssetName() (string, error) {
 		return "", fmt.Errorf("unsupported architecture %q", goruntime.GOARCH)
 	}
 
-	return fmt.Sprintf("clother_%s_%s.tar.gz", goruntime.GOOS, arch), nil
+	if goruntime.GOOS == "windows" {
+		return fmt.Sprintf("zaibflow_%s_%s.zip", goruntime.GOOS, arch), nil
+	}
+	return fmt.Sprintf("zaibflow_%s_%s.tar.gz", goruntime.GOOS, arch), nil
 }
 
 func releaseAssetURL(version, asset string) string {
-	if base := strings.TrimRight(strings.TrimSpace(os.Getenv("CLOTHER_RELEASE_BASE_URL")), "/"); base != "" {
+	if base := strings.TrimRight(strings.TrimSpace(firstNonEmpty(os.Getenv("ZAIBFLOW_RELEASE_BASE_URL"), os.Getenv("CLOTHER_RELEASE_BASE_URL"))), "/"); base != "" {
 		return base + "/" + asset
 	}
 	return strings.TrimRight(defaultReleaseBaseURL, "/") + "/" + displayVersion(version) + "/" + asset
@@ -106,7 +117,7 @@ func downloadFile(ctx context.Context, url, path string) error {
 	if err != nil {
 		return err
 	}
-	req.Header.Set("User-Agent", "clother-install")
+	req.Header.Set("User-Agent", "zaibflow-install")
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -172,6 +183,50 @@ func verifyChecksum(assetPath, checksumsPath, assetName string) error {
 }
 
 func extractBinary(assetPath, binaryPath string) error {
+	if strings.HasSuffix(assetPath, ".zip") {
+		return extractBinaryFromZip(assetPath, binaryPath)
+	}
+	return extractBinaryFromTarGz(assetPath, binaryPath)
+}
+
+func extractBinaryFromZip(assetPath, binaryPath string) error {
+	reader, err := zip.OpenReader(assetPath)
+	if err != nil {
+		return err
+	}
+	defer reader.Close()
+	for _, file := range reader.File {
+		if filepath.Base(file.Name) != filepath.Base(binaryPath) {
+			continue
+		}
+		rc, err := file.Open()
+		if err != nil {
+			return err
+		}
+		defer rc.Close()
+		tmp, err := os.CreateTemp(filepath.Dir(binaryPath), ".binary-*")
+		if err != nil {
+			return err
+		}
+		tmpPath := tmp.Name()
+		defer os.Remove(tmpPath)
+		if _, err := io.Copy(tmp, rc); err != nil {
+			tmp.Close()
+			return err
+		}
+		if err := tmp.Chmod(0o755); err != nil {
+			tmp.Close()
+			return err
+		}
+		if err := tmp.Close(); err != nil {
+			return err
+		}
+		return os.Rename(tmpPath, binaryPath)
+	}
+	return fmt.Errorf("zaibflow binary not found in %s", assetPath)
+}
+
+func extractBinaryFromTarGz(assetPath, binaryPath string) error {
 	file, err := os.Open(assetPath)
 	if err != nil {
 		return err
@@ -193,7 +248,7 @@ func extractBinary(assetPath, binaryPath string) error {
 		if err != nil {
 			return err
 		}
-		if filepath.Base(header.Name) != "clother" {
+		if filepath.Base(header.Name) != filepath.Base(binaryPath) {
 			continue
 		}
 
@@ -217,5 +272,14 @@ func extractBinary(assetPath, binaryPath string) error {
 		}
 		return os.Rename(tmpPath, binaryPath)
 	}
-	return fmt.Errorf("clother binary not found in %s", assetPath)
+	return fmt.Errorf("zaibflow binary not found in %s", assetPath)
+}
+
+func firstNonEmpty(values ...string) string {
+	for _, value := range values {
+		if strings.TrimSpace(value) != "" {
+			return value
+		}
+	}
+	return ""
 }

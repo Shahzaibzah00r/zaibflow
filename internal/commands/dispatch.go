@@ -12,12 +12,16 @@ func Dispatch(ctx context.Context, c Context, command string, args []string) (in
 	case "":
 		cli.ShowBrief(c.Output.Stdout)
 		return 0, nil
+	case "init":
+		return runConfig(ctx, c, args)
 	case "config":
 		return runConfig(ctx, c, args)
 	case "list":
 		return runList(ctx, c)
 	case "info":
 		return runInfo(ctx, c, args)
+	case "run":
+		return runRun(ctx, c, args)
 	case "test":
 		return runTest(ctx, c, args)
 	case "status":

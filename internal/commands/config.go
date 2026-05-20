@@ -46,7 +46,7 @@ func runConfig(_ context.Context, c Context, args []string) (int, error) {
 func chooseProvider(c Context) (string, error) {
 	index := 1
 	choices := map[int]string{}
-	c.Output.Header("Clother Configuration")
+	c.Output.Header("ZaibFlow Configuration")
 	for _, category := range c.Catalog.Categories() {
 		fmt.Fprintln(c.Output.Stdout, category)
 		for _, provider := range c.Catalog.ProvidersByCategory(category) {

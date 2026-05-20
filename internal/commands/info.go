@@ -10,7 +10,7 @@ import (
 
 func runInfo(_ context.Context, c Context, args []string) (int, error) {
 	if len(args) == 0 {
-		return 1, fmt.Errorf("usage: clother info <provider>")
+		return 1, fmt.Errorf("usage: zaibflow info <provider>")
 	}
 	target, err := profiles.Resolve(args[0], c.Catalog, c.Config)
 	if err != nil {

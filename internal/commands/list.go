@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/jolehuit/clother/internal/config"
+	"github.com/jolehuit/clother/internal/launchers"
 	"github.com/jolehuit/clother/internal/profiles"
 	"github.com/jolehuit/clother/internal/providers"
 )
@@ -26,7 +27,7 @@ func runList(_ context.Context, c Context) (int, error) {
 		for _, target := range targets {
 			payload.Profiles = append(payload.Profiles, item{
 				Name:       target.Profile,
-				Command:    "clother-" + target.Profile,
+				Command:    launchers.LauncherName(target.Profile),
 				Configured: configured(target, c.Secrets),
 			})
 		}
@@ -47,7 +48,7 @@ func runList(_ context.Context, c Context) (int, error) {
 		}
 		if len(targets) > 0 {
 			fmt.Fprintln(c.Output.Stdout)
-			fmt.Fprintln(c.Output.Stdout, "Run: clother-<name>")
+			fmt.Fprintln(c.Output.Stdout, "Run: zf-<name>")
 		}
 	}
 	return 0, nil

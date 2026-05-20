@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	defaultMetadataURL = "https://github.com/jolehuit/clother/releases/latest/download/latest.json"
+	defaultMetadataURL = "https://github.com/Shahzaibzah00r/zaibflow/releases/latest/download/latest.json"
 	checkTTL           = 24 * time.Hour
 	notifyTTL          = 24 * time.Hour
 )
@@ -41,7 +41,7 @@ func MaybeMessage(paths config.Paths, current string, now time.Time) (string, er
 }
 
 func maybeMessage(paths config.Paths, current string, now time.Time, fetch fetchFunc) (string, error) {
-	if os.Getenv("CLOTHER_NO_UPDATE_CHECK") == "1" {
+	if os.Getenv("ZAIBFLOW_NO_UPDATE_CHECK") == "1" || os.Getenv("CLOTHER_NO_UPDATE_CHECK") == "1" {
 		return "", nil
 	}
 	if normalizeVersion(current) == "" || strings.EqualFold(strings.TrimSpace(current), "dev") {
@@ -95,14 +95,14 @@ func maybeMessage(paths config.Paths, current string, now time.Time, fetch fetch
 		return "", nil
 	}
 	return fmt.Sprintf(
-		"Update available: Clother %s (current %s). Run: clother install",
+		"Update available: ZaibFlow %s (current %s). Run: zaibflow install",
 		displayVersion(cache.LatestVersion),
 		displayVersion(current),
 	), nil
 }
 
 func metadataURL() string {
-	if override := strings.TrimSpace(os.Getenv("CLOTHER_UPDATE_URL")); override != "" {
+	if override := strings.TrimSpace(firstNonEmpty(os.Getenv("ZAIBFLOW_UPDATE_URL"), os.Getenv("CLOTHER_UPDATE_URL"))); override != "" {
 		return override
 	}
 	return defaultMetadataURL
@@ -130,7 +130,7 @@ func fetchMetadata(ctx context.Context, url string) (remoteMetadata, error) {
 	if err != nil {
 		return remoteMetadata{}, err
 	}
-	req.Header.Set("User-Agent", "clother-update-check")
+	req.Header.Set("User-Agent", "zaibflow-update-check")
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -197,7 +197,7 @@ func saveCache(path string, cache cacheFile) error {
 
 func releaseURL(version string) string {
 	tag := displayVersion(version)
-	return "https://github.com/jolehuit/clother/releases/tag/" + tag
+	return "https://github.com/Shahzaibzah00r/zaibflow/releases/tag/" + tag
 }
 
 func displayVersion(version string) string {

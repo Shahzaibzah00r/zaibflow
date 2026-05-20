@@ -27,11 +27,21 @@ type Target struct {
 
 func Invocation(argv0 string) (string, bool) {
 	base := filepath.Base(argv0)
-	if base == "clother" || base == "clother.sh" {
+	if base == "zaibflow" || base == "zaibflow.sh" || base == "zf" || base == "zf.sh" {
 		return "", false
 	}
+	if base == "zf-local" {
+		return "ollama", true
+	}
+	if strings.HasPrefix(base, "zf-") {
+		return strings.TrimPrefix(base, "zf-"), true
+	}
 	if strings.HasPrefix(base, "clother-") {
-		return strings.TrimPrefix(base, "clother-"), true
+		legacy := strings.TrimPrefix(base, "clother-")
+		if legacy == "ollama" {
+			return "ollama", true
+		}
+		return legacy, true
 	}
 	return "", false
 }

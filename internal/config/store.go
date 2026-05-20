@@ -91,8 +91,10 @@ func (cfg *File) ApplyLegacySecrets(secrets Secrets, catalog providers.Catalog) 
 		if _, ok := builtinSecretKeys[key]; ok {
 			continue
 		}
-		baseURLKey := "CLOTHER_" + key + "_BASE_URL"
-		baseURL := secrets[baseURLKey]
+		baseURL := secrets["ZAIBFLOW_"+key+"_BASE_URL"]
+		if baseURL == "" {
+			baseURL = secrets["CLOTHER_"+key+"_BASE_URL"]
+		}
 		if baseURL == "" {
 			continue
 		}
@@ -166,6 +168,9 @@ func normalizeProviderOverrideModel(provider providers.Provider, value string) s
 
 func normalizeOpenRouterAliasName(name string) string {
 	name = strings.TrimSpace(strings.ToLower(name))
+	for strings.HasPrefix(name, "zf-or-") {
+		name = strings.TrimPrefix(name, "zf-or-")
+	}
 	for strings.HasPrefix(name, "clother-or-") {
 		name = strings.TrimPrefix(name, "clother-or-")
 	}
@@ -175,7 +180,7 @@ func normalizeOpenRouterAliasName(name string) string {
 
 func looksLikeLauncherName(value string) bool {
 	value = strings.TrimSpace(strings.ToLower(value))
-	return strings.HasPrefix(value, "clother-")
+	return strings.HasPrefix(value, "zf-") || strings.HasPrefix(value, "clother-")
 }
 
 func (cfg *File) OpenRouterNames() []string {

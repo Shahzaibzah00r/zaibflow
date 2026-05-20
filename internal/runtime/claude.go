@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
+	goruntime "runtime"
 	"strings"
 	"time"
 
@@ -37,6 +39,19 @@ func RunClaudeShim(ctx context.Context, paths config.Paths, args []string) (int,
 func FindRealClaude(paths config.Paths) (string, error) {
 	self, _ := os.Executable()
 	selfResolved := resolvedPath(self)
+	if goruntime.GOOS == "windows" {
+		candidate, err := exec.LookPath("claude")
+		if err == nil && candidate != "" {
+			if selfResolved == "" || !samePath(candidate, selfResolved) {
+				return candidate, nil
+			}
+		}
+		fallback := filepath.Join(paths.BinDir, "claude-real")
+		if info, err := os.Stat(fallback); err == nil && !info.IsDir() {
+			return fallback, nil
+		}
+		return "", fmt.Errorf("could not locate real claude; ensure `claude` is in PATH or `%s` exists", fallback)
+	}
 	for _, dir := range filepath.SplitList(os.Getenv("PATH")) {
 		if dir == "" {
 			continue

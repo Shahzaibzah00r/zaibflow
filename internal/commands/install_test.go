@@ -23,6 +23,7 @@ func TestRunInstallPreservesSameBinClaude(t *testing.T) {
 	t.Setenv("XDG_CONFIG_HOME", filepath.Join(home, ".config"))
 	t.Setenv("XDG_DATA_HOME", filepath.Join(home, ".local", "share"))
 	t.Setenv("XDG_CACHE_HOME", filepath.Join(home, ".cache"))
+	t.Setenv("HOMEBREW_PREFIX", "")
 	t.Setenv("CLOTHER_BIN", binDir)
 	t.Setenv("CLOTHER_SKIP_SELF_UPDATE", "1")
 
@@ -89,6 +90,7 @@ func TestRunInstallUpgradesToLatestRelease(t *testing.T) {
 	t.Setenv("XDG_CONFIG_HOME", filepath.Join(home, ".config"))
 	t.Setenv("XDG_DATA_HOME", filepath.Join(home, ".local", "share"))
 	t.Setenv("XDG_CACHE_HOME", filepath.Join(home, ".cache"))
+	t.Setenv("HOMEBREW_PREFIX", "")
 	t.Setenv("CLOTHER_BIN", binDir)
 
 	if err := os.MkdirAll(binDir, 0o755); err != nil {
@@ -102,7 +104,7 @@ func TestRunInstallUpgradesToLatestRelease(t *testing.T) {
 	oldPath := os.Getenv("PATH")
 	t.Setenv("PATH", binDir+string(os.PathListSeparator)+oldPath)
 
-	releaseBinary := filepath.Join(root, "release-clother")
+	releaseBinary := filepath.Join(root, "release-zaibflow")
 	if err := os.WriteFile(releaseBinary, []byte("#!/bin/sh\necho release-3.0.3\n"), 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -143,12 +145,12 @@ func TestRunInstallUpgradesToLatestRelease(t *testing.T) {
 		t.Fatalf("runInstall() code = %d, want 0", code)
 	}
 
-	installed, err := os.ReadFile(filepath.Join(binDir, "clother"))
+	installed, err := os.ReadFile(filepath.Join(binDir, "zaibflow"))
 	if err != nil {
 		t.Fatal(err)
 	}
 	if !strings.Contains(string(installed), "release-3.0.3") {
-		t.Fatalf("expected installed clother to come from latest release, got %q", string(installed))
+		t.Fatalf("expected installed zaibflow to come from latest release, got %q", string(installed))
 	}
 }
 
@@ -162,6 +164,7 @@ func TestRunInstallWarnsWhenBinDirIsNotOnPath(t *testing.T) {
 	t.Setenv("XDG_CONFIG_HOME", filepath.Join(home, ".config"))
 	t.Setenv("XDG_DATA_HOME", filepath.Join(home, ".local", "share"))
 	t.Setenv("XDG_CACHE_HOME", filepath.Join(home, ".cache"))
+	t.Setenv("HOMEBREW_PREFIX", "")
 	t.Setenv("CLOTHER_BIN", binDir)
 	t.Setenv("CLOTHER_SKIP_SELF_UPDATE", "1")
 

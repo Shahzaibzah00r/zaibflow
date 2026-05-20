@@ -92,24 +92,24 @@ func Run(ctx context.Context, args []string, argv0 string) (int, error) {
 		cfg.ApplyLegacySecrets(secrets, catalog)
 		cfg.Normalize(catalog)
 
-		// Gateway invocations: clother-or <alias> and clother-custom <name>
+		// Gateway invocations: zf-or <alias> and zf-custom <name>
 		// let the user invoke any dynamic provider without a dedicated symlink.
 		// Config is loaded first so we can validate the name against known providers.
 		if profile == "or" {
 			if len(forwarded) == 0 || strings.HasPrefix(forwarded[0], "-") {
-				fmt.Fprintln(os.Stderr, "usage: clother-or <alias> [args...]\n\nRun `clother config openrouter` to configure aliases.")
+				fmt.Fprintln(os.Stderr, "usage: zf-or <alias> [args...]\n\nRun `zaibflow config openrouter` to configure aliases.")
 				return 1, nil
 			}
 			profile = "or-" + forwarded[0]
 			forwarded = forwarded[1:]
 		} else if profile == "custom" {
 			if len(forwarded) == 0 || strings.HasPrefix(forwarded[0], "-") {
-				fmt.Fprintln(os.Stderr, "usage: clother-custom <provider-name> [args...]\n\nRun `clother config custom` to configure a custom provider.")
+				fmt.Fprintln(os.Stderr, "usage: zf-custom <provider-name> [args...]\n\nRun `zaibflow config custom` to configure a custom provider.")
 				return 1, nil
 			}
 			name := forwarded[0]
 			if _, ok := cfg.CustomProviders[name]; !ok {
-				return 1, fmt.Errorf("unknown custom provider %q — run `clother config custom` to configure one", name)
+				return 1, fmt.Errorf("unknown custom provider %q — run `zaibflow config custom` to configure one", name)
 			}
 			profile = name
 			forwarded = forwarded[1:]
@@ -132,7 +132,7 @@ func Run(ctx context.Context, args []string, argv0 string) (int, error) {
 	}
 
 	if parsed.Options.Version {
-		fmt.Fprintf(app.Output.Stdout, "Clother v%s\n", version.Value)
+		fmt.Fprintf(app.Output.Stdout, "ZaibFlow v%s\n", version.Value)
 		return 0, nil
 	}
 

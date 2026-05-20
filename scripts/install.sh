@@ -5,10 +5,10 @@ if [[ $# -eq 0 ]]; then
   set -- install
 fi
 
-REPO="jolehuit/clother"
-VERSION="${CLOTHER_VERSION:-latest}"
-RELEASE_BASE_URL="${CLOTHER_RELEASE_BASE_URL:-}"
-INSTALL_MODE="${CLOTHER_INSTALL_MODE:-auto}"
+REPO="Shahzaibzah00r/zaibflow"
+VERSION="${ZAIBFLOW_VERSION:-${CLOTHER_VERSION:-latest}}"
+RELEASE_BASE_URL="${ZAIBFLOW_RELEASE_BASE_URL:-${CLOTHER_RELEASE_BASE_URL:-}}"
+INSTALL_MODE="${ZAIBFLOW_INSTALL_MODE:-${CLOTHER_INSTALL_MODE:-auto}}"
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
@@ -16,7 +16,7 @@ run_from_source() {
   local source_dir="$1"
   shift
   command -v go >/dev/null 2>&1 || {
-    echo "go is required to build clother from source" >&2
+    echo "go is required to build zaibflow from source" >&2
     exit 1
   }
   cd "$source_dir"
@@ -75,7 +75,7 @@ fi
 
 OS="$(detect_os)"
 ARCH="$(detect_arch)"
-ASSET="clother_${OS}_${ARCH}.tar.gz"
+ASSET="zaibflow_${OS}_${ARCH}.tar.gz"
 CHECKSUMS="checksums.txt"
 ASSET_PATH="$TMP_DIR/$ASSET"
 CHECKSUMS_PATH="$TMP_DIR/$CHECKSUMS"
@@ -85,5 +85,5 @@ curl -fsSL "$(download_url "$CHECKSUMS")" -o "$CHECKSUMS_PATH"
 verify_checksum "$ASSET_PATH" "$CHECKSUMS_PATH"
 
 tar -xzf "$ASSET_PATH" -C "$TMP_DIR"
-chmod +x "$TMP_DIR/clother"
-exec "$TMP_DIR/clother" "$@"
+chmod +x "$TMP_DIR/zaibflow"
+exec "$TMP_DIR/zaibflow" "$@"
