@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/logo.png" alt="ZaibFlow logo" width="220" />
+  <img src="assets/logo.png" alt="ZaibFlow logo" width="220" />
   <h1>ZaibFlow</h1>
   <p><strong>A cross-platform CLI to manage and invoke model providers (Claude/OpenRouter/OLLAMA/custom).</strong></p>
   <p>
@@ -120,3 +120,5 @@ Maintained by Shahzaib — contact: <shahzaibzahoor7@gmail.com>
 ## License
 
 MIT
+ 
+ZaibFlow is based on the open-source Clother project by jolehuit, licensed under MIT.
