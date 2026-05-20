@@ -6,8 +6,24 @@ on:
       - "v[0-9]*"
 
 jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Run tests
+        run: go test ./...
+
   build-matrix:
+    name: Build ${{ matrix.goos }} ${{ matrix.goarch }}
+    needs: test
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: ubuntu-latest
@@ -28,15 +44,20 @@ jobs:
           - os: windows-latest
             goos: windows
             goarch: arm64
+
     runs-on: ${{ matrix.os }}
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-      - run: go test ./...
+
       - name: Create dist directory
         run: mkdir -p dist
+        shell: bash
+
       - name: Build binary
         env:
           GOOS: ${{ matrix.goos }}
@@ -44,48 +65,59 @@ jobs:
           CGO_ENABLED: 0
         run: |
           if [ "${{ matrix.goos }}" = "windows" ]; then
-            go build -o dist/zaibflow_${{ matrix.goos }}_${{ matrix.goarch }}.exe ./cmd/zaibflow
+            go build -o dist/zaibflow.exe ./cmd/zaibflow
           else
-            go build -o dist/zaibflow_${{ matrix.goos }}_${{ matrix.goarch }} ./cmd/zaibflow
+            go build -o dist/zaibflow ./cmd/zaibflow
           fi
         shell: bash
+
       - name: Package release
         run: |
           cd dist
+
           if [ "${{ matrix.goos }}" = "windows" ]; then
-            zip -j zaibflow_${{ matrix.goos }}_${{ matrix.goarch }}.zip zaibflow_${{ matrix.goos }}_${{ matrix.goarch }}.exe
-            rm -f zaibflow_${{ matrix.goos }}_${{ matrix.goarch }}.exe
+            7z a zaibflow_${{ matrix.goos }}_${{ matrix.goarch }}.zip zaibflow.exe
+            rm -f zaibflow.exe
           else
-            tar -czf zaibflow_${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz zaibflow_${{ matrix.goos }}_${{ matrix.goarch }}
-            rm -f zaibflow_${{ matrix.goos }}_${{ matrix.goarch }}
+            tar -czf zaibflow_${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz zaibflow
+            rm -f zaibflow
           fi
         shell: bash
-      - name: Upload artifacts
+
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: zaibflow-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: dist/zaibflow_*
+          path: |
+            dist/zaibflow_*.tar.gz
+            dist/zaibflow_*.zip
 
   release:
+    name: Create GitHub Release
     needs: build-matrix
     runs-on: ubuntu-latest
     permissions:
       contents: write
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
           path: dist
           merge-multiple: true
+
       - name: List artifacts
         run: ls -la dist/
+
       - name: Create checksums
         run: |
           cd dist
           find . -type f \( -name "*.tar.gz" -o -name "*.zip" \) | sort | xargs sha256sum > checksums.txt
           cat checksums.txt
-      - name: Create Release
+
+      - name: Create release
         uses: softprops/action-gh-release@v2
         with:
           files: |
