@@ -126,10 +126,11 @@ async function ensureInstalled({ platform: currentPlatform, arch: currentArch, i
 }
 
 function releaseAssetName(currentPlatform, currentArch) {
+    const platform = currentPlatform === 'win32' ? 'windows' : currentPlatform;
     if (currentPlatform === 'win32') {
-        return `${BIN_NAME}_${currentPlatform}_${currentArch}.zip`;
+        return `${BIN_NAME}_${platform}_${currentArch}.zip`;
     }
-    return `${BIN_NAME}_${currentPlatform}_${currentArch}.tar.gz`;
+    return `${BIN_NAME}_${platform}_${currentArch}.tar.gz`;
 }
 
 function releaseAssetUrl(assetName) {
