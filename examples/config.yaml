@@ -1,0 +1,12 @@
+# Sample ZaibFlow configuration (examples)
+version: 1
+provider_overrides: {}
+openrouter_aliases:
+  my-alias: "gpt-4o-mini"
+custom_providers:
+  myprovider:
+    name: myprovider
+    display_name: "My Provider"
+    base_url: "https://api.myprovider.example"
+    api_key_env: "MYPROVIDER_API_KEY"
+    default_model: "small"

@@ -1,3 +1,79 @@
+name: Build and Publish Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build-and-release:
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            goos: linux
+            pkg_ext: tar.gz
+            archive_cmd: "tar -czf"
+          - runner: macos-latest
+            goos: darwin
+            pkg_ext: tar.gz
+            archive_cmd: "tar -czf"
+          - runner: windows-latest
+            goos: windows
+            pkg_ext: zip
+            archive_cmd: "powershell -Command Compress-Archive -Path"
+        fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
+
+      - name: Prepare build
+        run: |
+          mkdir -p out
+
+      - name: Build
+        run: |
+          GOOS=${{ matrix.goos }} GOARCH=amd64 go build -ldflags "-s -w" -o out/zaibflow_${{ matrix.goos }}_amd64 ./cmd/zaibflow
+
+      - name: Package
+        run: |
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            zip -j out/zaibflow_${{ matrix.goos }}_amd64.zip out/zaibflow_${{ matrix.goos }}_amd64.exe || true
+          else
+            tar -C out -czf out/zaibflow_${{ matrix.goos }}_amd64.tar.gz zaibflow_${{ matrix.goos }}_amd64
+          fi
+
+      - name: Create GitHub Release (if missing)
+        uses: softprops/turnstyle@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: ${{ github.ref_name }}
+          body: |
+            Automated build for ${{ github.ref_name }}
+
+      - name: Upload artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./out/zaibflow_${{ matrix.goos }}_amd64.${{ matrix.pkg_ext }}
+          asset_name: zaibflow_${{ matrix.goos }}_amd64.${{ matrix.pkg_ext }}
+          asset_content_type: application/octet-stream
 name: Release
 
 on:
