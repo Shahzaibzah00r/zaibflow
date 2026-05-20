@@ -25,7 +25,7 @@ func RunClaudeShim(ctx context.Context, paths config.Paths, args []string) (int,
 	}
 	claudePath, err := FindRealClaude(paths)
 	if err != nil {
-		if ensureErr := EnsureClaude(ctx); ensureErr != nil {
+		if ensureErr := EnsureClaude(ctx, paths); ensureErr != nil {
 			return 1, ensureErr
 		}
 		claudePath, err = FindRealClaude(paths)
@@ -45,16 +45,23 @@ func RunClaudeShim(ctx context.Context, paths config.Paths, args []string) (int,
 func FindRealClaude(paths config.Paths) (string, error) {
 	self, _ := os.Executable()
 	selfResolved := resolvedPath(self)
+	zaibflowBinary := "zaibflow"
+	if goruntime.GOOS == "windows" {
+		zaibflowBinary = "zaibflow.exe"
+	}
+	zaibflowPath := resolvedPath(filepath.Join(paths.BinDir, zaibflowBinary))
 	if goruntime.GOOS == "windows" {
 		candidate, err := exec.LookPath("claude")
 		if err == nil && candidate != "" {
-			if selfResolved == "" || !samePath(candidate, selfResolved) {
+			if (selfResolved == "" || !samePath(candidate, selfResolved)) && !samePath(candidate, zaibflowPath) {
 				return candidate, nil
 			}
 		}
 		fallback := filepath.Join(paths.BinDir, "claude-real")
 		if info, err := os.Stat(fallback); err == nil && !info.IsDir() {
-			return fallback, nil
+			if (selfResolved == "" || !samePath(fallback, selfResolved)) && !samePath(fallback, zaibflowPath) {
+				return fallback, nil
+			}
 		}
 		return "", fmt.Errorf("could not locate real claude; ensure `claude` is in PATH or `%s` exists", fallback)
 	}
@@ -70,11 +77,14 @@ func FindRealClaude(paths config.Paths) (string, error) {
 		if selfResolved != "" && samePath(candidate, selfResolved) {
 			continue
 		}
+		if samePath(candidate, zaibflowPath) {
+			continue
+		}
 		return candidate, nil
 	}
 	fallback := filepath.Join(paths.BinDir, "claude-real")
 	if info, err := os.Stat(fallback); err == nil && !info.IsDir() {
-		if selfResolved == "" || !samePath(fallback, selfResolved) {
+		if (selfResolved == "" || !samePath(fallback, selfResolved)) && !samePath(fallback, zaibflowPath) {
 			return fallback, nil
 		}
 	}
@@ -87,6 +97,16 @@ func PreserveRealClaude(paths config.Paths, realClaudePath string) error {
 	}
 	defaultClaude := filepath.Join(paths.BinDir, "claude")
 	if !samePath(realClaudePath, defaultClaude) {
+		return nil
+	}
+
+	zaibflowBinary := "zaibflow"
+	if goruntime.GOOS == "windows" {
+		zaibflowBinary = "zaibflow.exe"
+	}
+	zaibflowPath := resolvedPath(filepath.Join(paths.BinDir, zaibflowBinary))
+	if samePath(resolvedPath(realClaudePath), zaibflowPath) {
+		// The "claude" entry is a shim pointing to zaibflow; don't move it.
 		return nil
 	}
 

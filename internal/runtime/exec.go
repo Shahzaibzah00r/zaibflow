@@ -44,7 +44,7 @@ func Launch(ctx context.Context, paths config.Paths, target profiles.Target, arg
 
 	claudePath, err := FindRealClaude(paths)
 	if err != nil {
-		if ensureErr := EnsureClaude(ctx); ensureErr != nil {
+		if ensureErr := EnsureClaude(ctx, paths); ensureErr != nil {
 			return 1, ensureErr
 		}
 		claudePath, err = FindRealClaude(paths)

@@ -7,10 +7,12 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+
+	"github.com/Shahzaibzah00r/zaibflow/internal/config"
 )
 
-func EnsureClaude(ctx context.Context) error {
-	if _, err := exec.LookPath("claude"); err == nil {
+func EnsureClaude(ctx context.Context, paths config.Paths) error {
+	if _, err := FindRealClaude(paths); err == nil {
 		return nil
 	}
 
@@ -23,7 +25,7 @@ func EnsureClaude(ctx context.Context) error {
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("Claude Code CLI installation failed: %w", err)
 	}
-	if _, err := exec.LookPath("claude"); err != nil {
+	if _, err := FindRealClaude(paths); err != nil {
 		return fmt.Errorf("Claude Code CLI installed but not found on PATH; please restart your terminal")
 	}
 	return nil
