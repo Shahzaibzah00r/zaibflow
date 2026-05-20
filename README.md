@@ -84,6 +84,10 @@ Examples:
 zaibflow run ollama --model qwen3-coder
 zaibflow run openrouter my-alias
 zaibflow run local-provider --help
+
+# Skip permission prompts with --bp (bypass permissions)
+zf-zai --bp                          # use alias with --bp flag
+zaibflow run kimi --bp               # or use with zaibflow run
 ```
 
 Launchers
