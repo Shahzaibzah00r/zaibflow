@@ -102,15 +102,15 @@ func (o *Output) style(kind, input string) string {
 
 func Banner(name string) string {
 	lines := []string{
-		"  ____ _       _   _",
-		" / ___| | ___ | |_| |__   ___ _ __",
-		"| |   | |/ _ \\| __| '_ \\ / _ \\ '__|",
-		"| |___| | (_) | |_| | | |  __/ |",
-		" \\____|_|\\___/ \\__|_| |_|\\___|_|",
-	}
-	return strings.Join(append(lines,
-		"    + "+name,
-		"    Tip: add --yolo to skip permission prompts (--dangerously-skip-permissions)",
+		"╔══════════════════════════════════════════════╗",
+		"║              Z A I B F L O W                 ║",
+		"║        Agentic AI Runtime for Claude         ║",
+		"╚══════════════════════════════════════════════╝",
 		"",
-	), "\n")
+		"  [BOT] Provider  : " + name,
+		"  [RUN] Mode      : Claude Code Router",
+		"  [TIP] Shortcut  : --yolo or --bp skips permission prompts",
+		"",
+	}
+	return strings.Join(lines, "\n")
 }

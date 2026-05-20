@@ -25,6 +25,16 @@ func TestNormalizeClaudeArgsAvoidsDuplicateDangerousFlag(t *testing.T) {
 	}
 }
 
+func TestNormalizeClaudeArgsRewritesBp(t *testing.T) {
+	t.Parallel()
+
+	got := NormalizeClaudeArgs([]string{"--bp", "--resume", "abc"})
+	want := []string{"--dangerously-skip-permissions", "--resume", "abc"}
+	if !reflect.DeepEqual(got, want) {
+		t.Fatalf("NormalizeClaudeArgs() = %#v, want %#v", got, want)
+	}
+}
+
 func TestModelOverridePrefersExplicitFlagValue(t *testing.T) {
 	t.Parallel()
 

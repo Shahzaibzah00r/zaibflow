@@ -11,7 +11,7 @@ func NormalizeClaudeArgs(args []string) []string {
 		}
 	}
 	for _, arg := range args {
-		if arg == "--yolo" {
+		if arg == "--yolo" || arg == "--bp" {
 			if hasDangerous {
 				continue
 			}

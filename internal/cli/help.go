@@ -24,7 +24,7 @@ func ShowBrief(w io.Writer) {
 	fmt.Fprintln(w, "  update       Update to latest version")
 	fmt.Fprintln(w, "  uninstall    Remove ZaibFlow")
 	fmt.Fprintln(w)
-	fmt.Fprintln(w, "Tip: add --yolo to a launcher command to skip permission prompts.")
+	fmt.Fprintln(w, "Tip: add --yolo or --bp to a launcher command to skip permission prompts.")
 	fmt.Fprintln(w)
 	fmt.Fprintln(w, "Run zaibflow --help for full help.")
 }
@@ -62,9 +62,9 @@ func ShowFull(w io.Writer, catalog providers.Catalog) {
 	fmt.Fprintln(w, "  --plain")
 	fmt.Fprintln(w)
 	fmt.Fprintln(w, "Launcher tips:")
-	fmt.Fprintln(w, "  zf-zai --yolo            skip permission prompts")
-	fmt.Fprintln(w, "  claude --yolo            same behavior via the ZaibFlow shim")
-	fmt.Fprintln(w, "  --yolo                   shorthand for --dangerously-skip-permissions")
+	fmt.Fprintln(w, "  zf-zai --yolo|--bp       skip permission prompts")
+	fmt.Fprintln(w, "  claude --yolo|--bp       same behavior via the ZaibFlow shim")
+	fmt.Fprintln(w, "  --yolo, --bp             shorthand for --dangerously-skip-permissions")
 	fmt.Fprintln(w)
 	fmt.Fprintln(w, "Providers:")
 	for _, category := range catalog.Categories() {
